@@ -15,20 +15,34 @@
 #define GETGROUPS_T gid_t
 #define MRB_MAX_GROUPS (65536)
 
-static void
-mrb_stat_free(mrb_state *mrb, void *ptr)
-{
-  if (ptr != NULL) {
-    mrb_free(mrb, ptr);
-  }
-}
-
-struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_stat_free };
+struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_free };
 
 static struct stat *
 mrb_stat_alloc(mrb_state *mrb)
 {
   return (struct stat *)mrb_malloc(mrb, sizeof(struct stat));
+}
+
+static mrb_value
+file_s_lstat(mrb_state *mrb, mrb_value klass)
+{
+  struct RClass *stat_class;
+  struct RClass *file_class;
+  struct stat st, *ptr;
+  mrb_value fname;
+
+  mrb_get_args(mrb, "S", &fname);
+
+  if (lstat(RSTRING_PTR(fname), &st) == -1) {
+    mrb_sys_fail(mrb, RSTRING_PTR(fname));
+  }
+
+  file_class = mrb_class_get(mrb, "File");
+  stat_class = mrb_class_get_under(mrb, file_class, "Stat");
+  ptr = mrb_stat_alloc(mrb);
+  *ptr = st;
+
+  return mrb_obj_value(Data_Wrap_Struct(mrb, stat_class, &mrb_stat_type, ptr));
 }
 
 static mrb_value
@@ -44,7 +58,9 @@ stat_initialize(mrb_state *mrb, mrb_value self)
   }
 
   ptr = DATA_PTR(self);
-  mrb_stat_free(mrb, ptr);
+  if (ptr) {
+    mrb_free(mrb, ptr);
+  }
 
   ptr = mrb_stat_alloc(mrb);
   *ptr = st;
@@ -581,6 +597,8 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   struct RClass *stat = mrb_define_class_under(mrb, file, "Stat", mrb->object_class);
 
   MRB_SET_INSTANCE_TT(stat, MRB_TT_DATA);
+
+  mrb_define_class_method(mrb, file, "lstat", file_s_lstat, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, stat, "initialize", stat_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, stat, "initialize_copy", stat_initialize_copy, MRB_ARGS_REQ(1));

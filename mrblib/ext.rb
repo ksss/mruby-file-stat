@@ -1,9 +1,3 @@
-class IO
-  def stat
-    raise NotImplementedError
-  end
-end
-
 class File
   class Stat
     include Comparable
@@ -18,9 +12,5 @@ class File
 
   def self.stat(fname)
     File::Stat.new(fname)
-  end
-
-  def lstat
-    raise NotImplementedError
   end
 end

@@ -1,6 +1,7 @@
 /**
  * original is https://github.com/ruby/ruby/blob/trunk/file.c
  */
+
 #include "mruby.h"
 #include "mruby/string.h"
 #include "mruby/data.h"
@@ -26,8 +27,8 @@ mrb_stat_alloc(mrb_state *mrb)
 static mrb_value
 file_s_lstat(mrb_state *mrb, mrb_value klass)
 {
-  struct RClass *stat_class;
   struct RClass *file_class;
+  struct RClass *stat_class;
   struct stat st, *ptr;
   mrb_value fname;
 
@@ -37,7 +38,7 @@ file_s_lstat(mrb_state *mrb, mrb_value klass)
     mrb_sys_fail(mrb, RSTRING_PTR(fname));
   }
 
-  file_class = mrb_class_get(mrb, "File");
+  file_class = mrb_class_ptr(klass);
   stat_class = mrb_class_get_under(mrb, file_class, "Stat");
   ptr = mrb_stat_alloc(mrb);
   *ptr = st;
@@ -108,6 +109,16 @@ get_stat(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_ll2num(mrb_state *mrb, long long t)
+{
+  if (t < MRB_INT_MAX) {
+    return mrb_fixnum_value((mrb_int)t);
+  } else {
+    return mrb_float_value(mrb, (mrb_float)t);
+  }
+}
+
+static mrb_value
 stat_dev(mrb_state *mrb, mrb_value self)
 {
   return mrb_fixnum_value(get_stat(mrb, self)->st_dev);
@@ -116,7 +127,7 @@ stat_dev(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_ino(mrb_state *mrb, mrb_value self)
 {
-  return mrb_fixnum_value(get_stat(mrb, self)->st_ino);
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_ino);
 }
 
 static mrb_value
@@ -134,13 +145,13 @@ stat_nlink(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_uid(mrb_state *mrb, mrb_value self)
 {
-  return mrb_fixnum_value(get_stat(mrb, self)->st_uid);
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_uid);
 }
 
 static mrb_value
 stat_gid(mrb_state *mrb, mrb_value self)
 {
-  return mrb_fixnum_value(get_stat(mrb, self)->st_gid);
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_gid);
 }
 
 static mrb_value
@@ -150,38 +161,27 @@ stat_rdev(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_time2num(mrb_state *mrb, time_t t)
-{
-  if (t < MRB_INT_MAX) {
-    return mrb_fixnum_value((mrb_int)t);
-  } else {
-    return mrb_float_value(mrb, (mrb_float)t);
-  }
-}
-
-static mrb_value
 stat_atime(mrb_state *mrb, mrb_value self)
 {
-  // FIXME should return a Time?
-  return mrb_time2num(mrb, get_stat(mrb, self)->st_atime);
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_atime);
 }
 
 static mrb_value
 stat_mtime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_time2num(mrb, get_stat(mrb, self)->st_mtime);
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_mtime);
 }
 
 static mrb_value
 stat_ctime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_time2num(mrb, get_stat(mrb, self)->st_ctime);
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_ctime);
 }
 
 static mrb_value
 stat_size(mrb_state *mrb, mrb_value self)
 {
-  return mrb_fixnum_value(get_stat(mrb, self)->st_size);
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_size);
 }
 
 static mrb_value
@@ -193,7 +193,7 @@ stat_blksize(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_blocks(mrb_state *mrb, mrb_value self)
 {
-  return mrb_fixnum_value(get_stat(mrb, self)->st_blocks);
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_blocks);
 }
 
 static mrb_value
@@ -253,7 +253,7 @@ stat_size_p(mrb_state *mrb, mrb_value self)
 {
   return get_stat(mrb, self)->st_size == 0
     ? mrb_nil_value()
-    : mrb_fixnum_value(get_stat(mrb, self)->st_size);
+    : mrb_ll2num(mrb, get_stat(mrb, self)->st_size);
 }
 
 static mrb_value
@@ -276,7 +276,7 @@ mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
 #else
   int rv = FALSE;
   int groups = 16;
-  GETGROUPS_T *gary;
+  GETGROUPS_T *gary = NULL;
   int anum = -1;
 
   if (getgid() == gid || getegid() == gid)

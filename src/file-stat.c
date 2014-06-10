@@ -109,6 +109,16 @@ get_stat(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+check_fixnum_overflow(mrb_state *mrb, long long t)
+{
+  if (0 <= t && t < MRB_INT_MAX) {
+    return mrb_fixnum_value((mrb_int)t);
+  } else {
+    return mrb_nil_value(); // maybe overflow
+  }
+}
+
+static mrb_value
 mrb_ll2num(mrb_state *mrb, long long t)
 {
   if (t < MRB_INT_MAX) {
@@ -147,7 +157,7 @@ stat_dev_minor(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_ino(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_ino);
+  return check_fixnum_overflow(mrb, get_stat(mrb, self)->st_ino);
 }
 
 static mrb_value
@@ -165,13 +175,13 @@ stat_nlink(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_uid(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_uid);
+  return check_fixnum_overflow(mrb, get_stat(mrb, self)->st_uid);
 }
 
 static mrb_value
 stat_gid(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_gid);
+  return check_fixnum_overflow(mrb, get_stat(mrb, self)->st_gid);
 }
 
 static mrb_value

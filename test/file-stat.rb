@@ -28,6 +28,16 @@ assert 'File::Stat#dev' do
   assert_kind_of Fixnum, stat.dev
 end
 
+assert 'File::Stat#dev_major' do
+  stat = File::Stat.new('README.md')
+  assert_include [Fixnum, NilClass], stat.dev_major.class
+end
+
+assert 'File::Stat#dev_minor' do
+  stat = File::Stat.new('README.md')
+  assert_include [Fixnum, NilClass], stat.dev_minor.class
+end
+
 assert 'File::Stat#ino' do
   stat = File::Stat.new('README.md')
   assert_kind_of Fixnum, stat.ino
@@ -56,6 +66,16 @@ end
 assert 'File::Stat#rdev' do
   stat = File::Stat.new('README.md')
   assert_kind_of Fixnum, stat.rdev
+end
+
+assert 'File::Stat#rdev_major' do
+  stat = File::Stat.new('README.md')
+  assert_include [Fixnum, NilClass], stat.rdev_major.class
+end
+
+assert 'File::Stat#rdev_minor' do
+  stat = File::Stat.new('README.md')
+  assert_include [Fixnum, NilClass], stat.rdev_minor.class
 end
 
 assert 'File::Stat#blocks' do

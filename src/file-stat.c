@@ -125,6 +125,26 @@ stat_dev(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_dev_major(mrb_state *mrb, mrb_value self)
+{
+#if defined(major)
+  return mrb_fixnum_value(major(get_stat(mrb, self)->st_dev));
+#else
+  return mrb_nil_value(); // NotImplemented
+#endif
+}
+
+static mrb_value
+stat_dev_minor(mrb_state *mrb, mrb_value self)
+{
+#if defined(minor)
+  return mrb_fixnum_value(minor(get_stat(mrb, self)->st_dev));
+#else
+  return mrb_nil_value(); // NotImplemented
+#endif
+}
+
+static mrb_value
 stat_ino(mrb_state *mrb, mrb_value self)
 {
   return mrb_ll2num(mrb, get_stat(mrb, self)->st_ino);
@@ -158,6 +178,26 @@ static mrb_value
 stat_rdev(mrb_state *mrb, mrb_value self)
 {
   return mrb_fixnum_value(get_stat(mrb, self)->st_rdev);
+}
+
+static mrb_value
+stat_rdev_major(mrb_state *mrb, mrb_value self)
+{
+#if defined(major)
+  return mrb_fixnum_value(major(get_stat(mrb, self)->st_rdev));
+#else
+  return mrb_nil_value(); // NotImplemented
+#endif
+}
+
+static mrb_value
+stat_rdev_minor(mrb_state *mrb, mrb_value self)
+{
+#if defined(minor)
+  return mrb_fixnum_value(minor(get_stat(mrb, self)->st_rdev));
+#else
+  return mrb_nil_value(); // NotImplemented
+#endif
 }
 
 static mrb_value
@@ -603,12 +643,16 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "initialize", stat_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, stat, "initialize_copy", stat_initialize_copy, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, stat, "dev", stat_dev, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "dev_major", stat_dev_major, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "dev_minor", stat_dev_minor, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "ino", stat_ino, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "mode", stat_mode, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "nlink", stat_nlink, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "uid", stat_uid, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "gid", stat_gid, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "rdev", stat_rdev, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "rdev_major", stat_rdev_major, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "rdev_minor", stat_rdev_minor, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "atime", stat_atime, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "mtime", stat_mtime, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "ctime", stat_ctime, MRB_ARGS_NONE());

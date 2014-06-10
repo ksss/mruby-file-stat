@@ -103,7 +103,7 @@ get_stat(mrb_state *mrb, mrb_value self)
 {
   struct stat *st;
 
-  Data_Get_Struct(mrb, self, &mrb_stat_type, st);
+  st = mrb_data_get_ptr(mrb, self, &mrb_stat_type);
   if (!st) mrb_raise(mrb, E_TYPE_ERROR, "uninitialized File::Stat");
   return st;
 }

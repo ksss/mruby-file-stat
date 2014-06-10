@@ -111,7 +111,7 @@ get_stat(mrb_state *mrb, mrb_value self)
 static mrb_value
 check_fixnum_overflow(mrb_state *mrb, long long t)
 {
-  if (0 <= t && t < MRB_INT_MAX) {
+  if (MRB_INT_MIN <= t && t <= MRB_INT_MAX) {
     return mrb_fixnum_value((mrb_int)t);
   } else {
     return mrb_nil_value(); // maybe overflow
@@ -121,7 +121,7 @@ check_fixnum_overflow(mrb_state *mrb, long long t)
 static mrb_value
 mrb_ll2num(mrb_state *mrb, long long t)
 {
-  if (t < MRB_INT_MAX) {
+  if (MRB_INT_MIN <= t && t <= MRB_INT_MAX) {
     return mrb_fixnum_value((mrb_int)t);
   } else {
     return mrb_float_value(mrb, (mrb_float)t);

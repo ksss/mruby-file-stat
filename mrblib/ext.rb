@@ -43,6 +43,29 @@ class File
       return nil unless S_ISVTX
       (mode & S_ISVTX) != 0
     end
+
+    def ftype
+      case mode & S_IFMT
+      when S_IFSOCK
+        "socket"
+      when S_IFLNK
+        "link"
+      when S_IFREG
+        "file"
+      when S_IFBLK
+        "blockSpecial"
+      when S_IFDIR
+        "directory"
+      when S_IFCHR
+        "characterSpecial"
+      when S_IFIFO
+        "fifo"
+      else
+        "unknown"
+      end
+    rescue TypeError
+      "unknown"
+    end
   end
 end
 

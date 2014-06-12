@@ -498,53 +498,6 @@ stat_exec_real_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_file_ftype(mrb_state *mrb, const struct stat *st)
-{
-  const char *t;
-
-  if (S_ISREG(st->st_mode)) {
-    t = "file";
-  }
-  else if (S_ISDIR(st->st_mode)) {
-    t = "directory";
-  }
-  else if (S_ISCHR(st->st_mode)) {
-    t = "characterSpecial";
-  }
-#ifdef S_ISBLK
-  else if (S_ISBLK(st->st_mode)) {
-    t = "blockSpecial";
-  }
-#endif
-#ifdef S_ISFIFO
-  else if (S_ISFIFO(st->st_mode)) {
-    t = "fifo";
-  }
-#endif
-#ifdef S_ISLNK
-  else if (S_ISLNK(st->st_mode)) {
-    t = "link";
-  }
-#endif
-#ifdef S_ISSOCK
-  else if (S_ISSOCK(st->st_mode)) {
-    t = "socket";
-  }
-#endif
-  else {
-    t = "unknown";
-  }
-
-  return mrb_str_new_cstr(mrb, t);
-}
-
-static mrb_value
-stat_ftype(mrb_state *mrb, mrb_value self)
-{
-  return mrb_file_ftype(mrb, get_stat(mrb, self));
-}
-
-static mrb_value
 stat_zero_p(mrb_state *mrb, mrb_value self)
 {
   return mrb_bool_value(get_stat(mrb, self)->st_size == 0);
@@ -581,7 +534,6 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "blksize", stat_blksize, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "inspect", stat_inspect, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "ftype", stat_ftype, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "readable?", stat_read_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "readable_real?", stat_read_real_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable?", stat_write_p, MRB_ARGS_NONE());

@@ -9,6 +9,15 @@ class File
       nil
     end
 
+    def size?
+      s = size
+      s == 0 ? nil : s
+    end
+
+    def zero?
+      size == 0
+    end
+
     {
       symlink?:   S_IFLNK,
       file?:      S_IFREG,

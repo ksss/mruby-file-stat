@@ -290,14 +290,6 @@ stat_inspect(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-stat_size_p(mrb_state *mrb, mrb_value self)
-{
-  return get_stat(mrb, self)->st_size == 0
-    ? mrb_nil_value()
-    : mrb_ll2num(mrb, get_stat(mrb, self)->st_size);
-}
-
-static mrb_value
 stat_owned_p(mrb_state *mrb, mrb_value self)
 {
   return mrb_bool_value(get_stat(mrb, self)->st_uid == geteuid());
@@ -497,12 +489,6 @@ stat_exec_real_p(mrb_state *mrb, mrb_value self)
   return mrb_true_value();
 }
 
-static mrb_value
-stat_zero_p(mrb_state *mrb, mrb_value self)
-{
-  return mrb_bool_value(get_stat(mrb, self)->st_size == 0);
-}
-
 void
 mrb_mruby_file_stat_gem_init(mrb_state* mrb)
 {
@@ -540,8 +526,6 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "writable_real?", stat_write_real_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable?", stat_exec_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable_real?", stat_exec_real_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "zero?", stat_zero_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "size?", stat_size_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 

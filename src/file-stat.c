@@ -290,14 +290,6 @@ stat_inspect(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-stat_dir_p(mrb_state *mrb, mrb_value self)
-{
-  if (S_ISDIR(get_stat(mrb, self)->st_mode))
-    return mrb_true_value();
-  return mrb_false_value();
-}
-
-static mrb_value
 stat_size_p(mrb_state *mrb, mrb_value self)
 {
   return get_stat(mrb, self)->st_size == 0
@@ -553,95 +545,9 @@ stat_ftype(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-stat_file_p(mrb_state *mrb, mrb_value self)
-{
-  if (S_ISREG(get_stat(mrb, self)->st_mode))
-    return mrb_true_value();
-  return mrb_false_value();
-}
-
-static mrb_value
 stat_zero_p(mrb_state *mrb, mrb_value self)
 {
   return mrb_bool_value(get_stat(mrb, self)->st_size == 0);
-}
-
-static mrb_value
-stat_pipe_p(mrb_state *mrb, mrb_value self)
-{
-#ifdef S_IFIFO
-  if(S_ISFIFO(get_stat(mrb, self)->st_mode))
-    return mrb_true_value();
-#endif
-  return mrb_false_value();
-}
-
-static mrb_value
-stat_symlink_p(mrb_state *mrb, mrb_value self)
-{
-#ifdef S_ISLNK
-  if (S_ISLNK(get_stat(mrb, self)->st_mode))
-    return mrb_true_value();
-#endif
-  return mrb_false_value();
-}
-
-static mrb_value
-stat_socket_p(mrb_state *mrb, mrb_value self)
-{
-#ifdef S_ISSOCK
-  if (S_ISSOCK(get_stat(mrb, self)->st_mode))
-    return mrb_true_value();
-#endif
-  return mrb_false_value();
-}
-
-static mrb_value
-stat_blockdev_p(mrb_state *mrb, mrb_value self)
-{
-#ifdef S_ISBLK
-  if (S_ISBLK(get_stat(mrb, self)->st_mode))
-    return mrb_true_value();
-#endif
-  return mrb_false_value();
-}
-
-static mrb_value
-stat_chardev_p(mrb_state *mrb, mrb_value self)
-{
-  if (S_ISCHR(get_stat(mrb, self)->st_mode))
-    return mrb_true_value();
-  return mrb_false_value();
-}
-
-static mrb_value
-stat_setuid_p(mrb_state *mrb, mrb_value self)
-{
-#ifdef S_ISUID
-  if (get_stat(mrb, self)->st_mode & S_ISUID)
-    return mrb_true_value();
-#endif
-  return mrb_false_value();
-}
-
-static mrb_value
-stat_setgid_p(mrb_state *mrb, mrb_value self)
-{
-#ifdef S_ISGID
-  if (get_stat(mrb, self)->st_mode & S_ISGID)
-    return mrb_true_value();
-#endif
-  return mrb_false_value();
-}
-
-static mrb_value
-stat_sticky_p(mrb_state *mrb, mrb_value self)
-{
-#ifdef S_ISVTX
-  if (get_stat(mrb, self)->st_mode & S_ISVTX)
-    return mrb_true_value();
-#endif
-  return mrb_false_value();
 }
 
 void
@@ -676,26 +582,104 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "inspect", stat_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "ftype", stat_ftype, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "directory?", stat_dir_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "readable?", stat_read_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "readable_real?", stat_read_real_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable?", stat_write_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable_real?", stat_write_real_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable?", stat_exec_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable_real?", stat_exec_real_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "file?", stat_file_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "zero?", stat_zero_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "size?", stat_size_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "pipe?", stat_pipe_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "symlink?", stat_symlink_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "socket?", stat_socket_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "blockdev?", stat_blockdev_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "chardev?", stat_chardev_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "setuid?", stat_setuid_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "setgid?", stat_setgid_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "sticky?", stat_sticky_p, MRB_ARGS_NONE());
+
+  mrb_define_const(mrb, stat, "S_IFMT",
+#ifdef S_IFMT
+      mrb_fixnum_value(S_IFMT)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_IFSOCK",
+#ifdef S_IFSOCK
+      mrb_fixnum_value(S_IFSOCK)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_IFLNK",
+#ifdef S_IFLNK
+      mrb_fixnum_value(S_IFLNK)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_IFREG",
+#ifdef S_IFREG
+      mrb_fixnum_value(S_IFREG)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_IFBLK",
+#ifdef S_IFBLK
+      mrb_fixnum_value(S_IFBLK)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_IFDIR",
+#ifdef S_IFDIR
+      mrb_fixnum_value(S_IFDIR)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_IFCHR",
+#ifdef S_IFCHR
+      mrb_fixnum_value(S_IFCHR)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_IFIFO",
+#ifdef S_IFIFO
+      mrb_fixnum_value(S_IFIFO)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_ISUID",
+#ifdef S_ISUID
+      mrb_fixnum_value(S_ISUID)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_ISGID",
+#ifdef S_ISGID
+      mrb_fixnum_value(S_ISGID)
+#else
+      mrb_nil_value()
+#endif
+  );
+
+  mrb_define_const(mrb, stat, "S_ISVTX",
+#ifdef S_ISVTX
+      mrb_fixnum_value(S_ISVTX)
+#else
+      mrb_nil_value()
+#endif
+  );
 }
 
 void

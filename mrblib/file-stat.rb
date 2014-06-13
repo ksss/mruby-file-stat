@@ -44,6 +44,30 @@ class File
       end
     end
 
+    def executable?
+      if Process.euid == 0
+        (mode & IXUGO) != 0
+      elsif owned?
+        (mode & IXUSR) != 0
+      elsif grpowned?
+        (mode & IXGRP) != 0
+      else
+        (mode & IXOTH) == 0
+      end
+    end
+
+    def executable_real?
+      if Process.uid == 0
+        (mode & IXUGO) != 0
+      elsif owned_real?
+        (mode & IXUSR) != 0
+      elsif grpowned?
+        (mode & IXGRP) != 0
+      else
+        (mode & IXOTH) == 0
+      end
+    end
+
     def world_readable?
       m = mode
       if (m & IROTH) == IROTH

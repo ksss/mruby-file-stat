@@ -1,11 +1,6 @@
 class File
   class Stat
-    IRWXUGO = (IRWXU|IRWXG|IRWXO)
-    IALLUGO = (ISUID|ISGID|ISVTX|IRWXUGO)
-    IRUGO = (IRUSR|IRGRP|IROTH)
-    IWUGO = (IWUSR|IWGRP|IWOTH)
-    IXUGO = (IXUSR|IXGRP|IXOTH)
-
+    include File::Stat::Constants
     include Comparable
 
     def <=>(other)

@@ -377,6 +377,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   struct RClass *io = mrb_define_class(mrb, "IO", mrb->object_class);
   struct RClass *file = mrb_define_class(mrb, "File", io);
   struct RClass *stat = mrb_define_class_under(mrb, file, "Stat", mrb->object_class);
+  struct RClass *constants = mrb_define_module_under(mrb, stat, "Constants");
   struct RClass *process = mrb_define_module(mrb, "Process");
 
   MRB_SET_INSTANCE_TT(stat, MRB_TT_DATA);
@@ -405,33 +406,33 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "inspect", stat_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 
-  mrb_define_const(mrb, stat, "IFMT", mrb_fixnum_value(S_IFMT));
-  mrb_define_const(mrb, stat, "IFSOCK", mrb_fixnum_value(S_IFSOCK));
-  mrb_define_const(mrb, stat, "IFLNK", mrb_fixnum_value(S_IFLNK));
-  mrb_define_const(mrb, stat, "IFREG", mrb_fixnum_value(S_IFREG));
-  mrb_define_const(mrb, stat, "IFREG", mrb_fixnum_value(S_IFREG));
-  mrb_define_const(mrb, stat, "IFBLK", mrb_fixnum_value(S_IFBLK));
-  mrb_define_const(mrb, stat, "IFDIR", mrb_fixnum_value(S_IFDIR));
-  mrb_define_const(mrb, stat, "IFCHR", mrb_fixnum_value(S_IFCHR));
-  mrb_define_const(mrb, stat, "IFIFO", mrb_fixnum_value(S_IFIFO));
-  mrb_define_const(mrb, stat, "ISUID", mrb_fixnum_value(S_ISUID));
-  mrb_define_const(mrb, stat, "ISGID", mrb_fixnum_value(S_ISGID));
-  mrb_define_const(mrb, stat, "ISVTX", mrb_fixnum_value(S_ISVTX));
+  mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));
+  mrb_define_const(mrb, constants, "IFSOCK", mrb_fixnum_value(S_IFSOCK));
+  mrb_define_const(mrb, constants, "IFLNK", mrb_fixnum_value(S_IFLNK));
+  mrb_define_const(mrb, constants, "IFREG", mrb_fixnum_value(S_IFREG));
+  mrb_define_const(mrb, constants, "IFREG", mrb_fixnum_value(S_IFREG));
+  mrb_define_const(mrb, constants, "IFBLK", mrb_fixnum_value(S_IFBLK));
+  mrb_define_const(mrb, constants, "IFDIR", mrb_fixnum_value(S_IFDIR));
+  mrb_define_const(mrb, constants, "IFCHR", mrb_fixnum_value(S_IFCHR));
+  mrb_define_const(mrb, constants, "IFIFO", mrb_fixnum_value(S_IFIFO));
+  mrb_define_const(mrb, constants, "ISUID", mrb_fixnum_value(S_ISUID));
+  mrb_define_const(mrb, constants, "ISGID", mrb_fixnum_value(S_ISGID));
+  mrb_define_const(mrb, constants, "ISVTX", mrb_fixnum_value(S_ISVTX));
 
-  mrb_define_const(mrb, stat, "IRWXU", mrb_fixnum_value(S_IRWXU));
-  mrb_define_const(mrb, stat, "IRUSR", mrb_fixnum_value(S_IRUSR));
-  mrb_define_const(mrb, stat, "IWUSR", mrb_fixnum_value(S_IWUSR));
-  mrb_define_const(mrb, stat, "IXUSR", mrb_fixnum_value(S_IXUSR));
+  mrb_define_const(mrb, constants, "IRWXU", mrb_fixnum_value(S_IRWXU));
+  mrb_define_const(mrb, constants, "IRUSR", mrb_fixnum_value(S_IRUSR));
+  mrb_define_const(mrb, constants, "IWUSR", mrb_fixnum_value(S_IWUSR));
+  mrb_define_const(mrb, constants, "IXUSR", mrb_fixnum_value(S_IXUSR));
 
-  mrb_define_const(mrb, stat, "IRWXG", mrb_fixnum_value(S_IRWXG));
-  mrb_define_const(mrb, stat, "IRGRP", mrb_fixnum_value(S_IRGRP));
-  mrb_define_const(mrb, stat, "IWGRP", mrb_fixnum_value(S_IWGRP));
-  mrb_define_const(mrb, stat, "IXGRP", mrb_fixnum_value(S_IXGRP));
+  mrb_define_const(mrb, constants, "IRWXG", mrb_fixnum_value(S_IRWXG));
+  mrb_define_const(mrb, constants, "IRGRP", mrb_fixnum_value(S_IRGRP));
+  mrb_define_const(mrb, constants, "IWGRP", mrb_fixnum_value(S_IWGRP));
+  mrb_define_const(mrb, constants, "IXGRP", mrb_fixnum_value(S_IXGRP));
 
-  mrb_define_const(mrb, stat, "IRWXO", mrb_fixnum_value(S_IRWXO));
-  mrb_define_const(mrb, stat, "IROTH", mrb_fixnum_value(S_IROTH));
-  mrb_define_const(mrb, stat, "IWOTH", mrb_fixnum_value(S_IWOTH));
-  mrb_define_const(mrb, stat, "IXOTH", mrb_fixnum_value(S_IXOTH));
+  mrb_define_const(mrb, constants, "IRWXO", mrb_fixnum_value(S_IRWXO));
+  mrb_define_const(mrb, constants, "IROTH", mrb_fixnum_value(S_IROTH));
+  mrb_define_const(mrb, constants, "IWOTH", mrb_fixnum_value(S_IWOTH));
+  mrb_define_const(mrb, constants, "IXOTH", mrb_fixnum_value(S_IXOTH));
 
   mrb_define_class_method(mrb, process, "uid", process_getuid, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, process, "gid", process_getgid, MRB_ARGS_NONE());

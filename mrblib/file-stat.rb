@@ -24,18 +24,32 @@ class File
       size == 0
     end
 
-    {
-      symlink?:   IFLNK,
-      file?:      IFREG,
-      directory?: IFDIR,
-      chardev?:   IFCHR,
-      blockdev?:  IFBLK,
-      pipe?:      IFIFO,
-      socket?:    IFSOCK,
-    }.each do |m, c|
-      define_method(m) do
-        (mode & IFMT) == c
-      end
+    def symlink?
+      (mode & IFMT) == IFLNK
+    end
+
+    def file?
+      (mode & IFMT) == IFREG
+    end
+
+    def directory?
+      (mode & IFMT) == IFDIR
+    end
+
+    def chardev?
+      (mode & IFMT) == IFCHR
+    end
+
+    def blockdev?
+      (mode & IFMT) == IFBLK
+    end
+
+    def pipe?
+      (mode & IFMT) == IFIFO
+    end
+
+    def socket?
+      (mode & IFMT) == IFSOCK
     end
 
     def owned?

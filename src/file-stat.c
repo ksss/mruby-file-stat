@@ -53,6 +53,44 @@
 # define S_ISVTX 01000
 #endif
 
+#ifndef S_IRWXU
+# define S_IRWXU 0700
+#endif
+#ifndef S_IRUSR
+# define S_IRUSR 0400
+#endif
+#ifndef S_IWUSR
+# define S_IWUSR 0200
+#endif
+#ifndef S_IXUSR
+# define S_IXUSR 0100
+#endif
+
+#ifndef S_IRWXG
+# define S_IRWXG 070
+#endif
+#ifndef S_IRGRP
+# define S_IRGRP 040
+#endif
+#ifndef S_IWGRP
+# define S_IWGRP 020
+#endif
+#ifndef S_IXGRP
+# define S_IXGRP 010
+#endif
+
+#ifndef S_IRWXO
+# define S_IRWXO 07
+#endif
+#ifndef S_IROTH
+# define S_IROTH 04
+#endif
+#ifndef S_IWOTH
+# define S_IWOTH 02
+#endif
+#ifndef S_IXOTH
+# define S_IXOTH 01
+#endif
 
 struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_free };
 
@@ -579,6 +617,21 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_const(mrb, stat, "S_ISUID", mrb_fixnum_value(S_ISUID));
   mrb_define_const(mrb, stat, "S_ISGID", mrb_fixnum_value(S_ISGID));
   mrb_define_const(mrb, stat, "S_ISVTX", mrb_fixnum_value(S_ISVTX));
+
+  mrb_define_const(mrb, stat, "S_IRWXU", mrb_fixnum_value(S_IRWXU));
+  mrb_define_const(mrb, stat, "S_IRUSR", mrb_fixnum_value(S_IRUSR));
+  mrb_define_const(mrb, stat, "S_IWUSR", mrb_fixnum_value(S_IWUSR));
+  mrb_define_const(mrb, stat, "S_IXUSR", mrb_fixnum_value(S_IXUSR));
+
+  mrb_define_const(mrb, stat, "S_IRWXG", mrb_fixnum_value(S_IRWXG));
+  mrb_define_const(mrb, stat, "S_IRGRP", mrb_fixnum_value(S_IRGRP));
+  mrb_define_const(mrb, stat, "S_IWGRP", mrb_fixnum_value(S_IWGRP));
+  mrb_define_const(mrb, stat, "S_IXGRP", mrb_fixnum_value(S_IXGRP));
+
+  mrb_define_const(mrb, stat, "S_IRWXO", mrb_fixnum_value(S_IRWXO));
+  mrb_define_const(mrb, stat, "S_IROTH", mrb_fixnum_value(S_IROTH));
+  mrb_define_const(mrb, stat, "S_IWOTH", mrb_fixnum_value(S_IWOTH));
+  mrb_define_const(mrb, stat, "S_IXOTH", mrb_fixnum_value(S_IXOTH));
 }
 
 void

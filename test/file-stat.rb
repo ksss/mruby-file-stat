@@ -139,6 +139,11 @@ assert 'File::Stat#readable_real?' do
   assert_true stat.readable_real?
 end
 
+assert 'File::Stat#world_readable?' do
+  stat = File::Stat.new('README.md')
+  assert_include [Fixnum, NilClass], stat.world_readable?.class
+end
+
 assert 'File::Stat#writable?' do
   stat = File::Stat.new('README.md')
   assert_true stat.writable?
@@ -147,6 +152,11 @@ end
 assert 'File::Stat#writable_real?' do
   stat = File::Stat.new('README.md')
   assert_true stat.writable_real?
+end
+
+assert 'File::Stat#world_writable?' do
+  stat = File::Stat.new('README.md')
+  assert_include [Fixnum, NilClass], stat.world_writable?.class
 end
 
 assert 'File::Stat#executable?' do

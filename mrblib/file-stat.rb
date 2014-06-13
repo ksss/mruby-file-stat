@@ -1,5 +1,11 @@
 class File
   class Stat
+    S_IRWXUGO = (S_IRWXU|S_IRWXG|S_IRWXO)
+    S_IALLUGO = (S_ISUID|S_ISGID|S_ISVTX|S_IRWXUGO)
+    S_IRUGO = (S_IRUSR|S_IRGRP|S_IROTH)
+    S_IWUGO = (S_IWUSR|S_IWGRP|S_IWOTH)
+    S_IXUGO = (S_IXUSR|S_IXGRP|S_IXOTH)
+
     include Comparable
 
     def <=>(other)
@@ -35,6 +41,24 @@ class File
         define_method(m) do
           nil
         end
+      end
+    end
+
+    def world_readable?
+      m = mode
+      if (m & S_IROTH) == S_IROTH
+        m & (S_IRUGO|S_IWUGO|S_IXUGO)
+      else
+        nil
+      end
+    end
+
+    def world_writable?
+      m = mode
+      if (m & S_IWOTH) == S_IWOTH
+        m & (S_IRUGO|S_IWUGO|S_IXUGO)
+      else
+        nil
       end
     end
 

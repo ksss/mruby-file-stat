@@ -529,12 +529,37 @@ stat_exec_real_p(mrb_state *mrb, mrb_value self)
   return mrb_true_value();
 }
 
+static mrb_value
+process_getuid(mrb_state *mrb, mrb_value mod)
+{
+  return mrb_fixnum_value((mrb_int)getuid());
+}
+
+static mrb_value
+process_getgid(mrb_state *mrb, mrb_value mod)
+{
+  return mrb_fixnum_value((mrb_int)getgid());
+}
+
+static mrb_value
+process_geteuid(mrb_state *mrb, mrb_value mod)
+{
+  return mrb_fixnum_value((mrb_int)geteuid());
+}
+
+static mrb_value
+process_getegid(mrb_state *mrb, mrb_value mod)
+{
+  return mrb_fixnum_value((mrb_int)getegid());
+}
+
 void
 mrb_mruby_file_stat_gem_init(mrb_state* mrb)
 {
   struct RClass *io = mrb_define_class(mrb, "IO", mrb->object_class);
   struct RClass *file = mrb_define_class(mrb, "File", io);
   struct RClass *stat = mrb_define_class_under(mrb, file, "Stat", mrb->object_class);
+  struct RClass *process = mrb_define_module(mrb, "Process");
 
   MRB_SET_INSTANCE_TT(stat, MRB_TT_DATA);
 
@@ -596,6 +621,11 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_const(mrb, stat, "IROTH", mrb_fixnum_value(S_IROTH));
   mrb_define_const(mrb, stat, "IWOTH", mrb_fixnum_value(S_IWOTH));
   mrb_define_const(mrb, stat, "IXOTH", mrb_fixnum_value(S_IXOTH));
+
+  mrb_define_class_method(mrb, process, "uid", process_getuid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process, "gid", process_getgid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process, "euid", process_geteuid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process, "egid", process_getegid, MRB_ARGS_NONE());
 }
 
 void

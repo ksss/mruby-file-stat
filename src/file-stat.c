@@ -440,18 +440,12 @@ stat_read_p(mrb_state *mrb, mrb_value self)
 
   if (geteuid() == 0)
     return mrb_true_value();
-#ifdef S_IRUSR
   if (mrb_test(stat_owned_p(mrb, self)))
     return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IRGRP
   if (mrb_test(stat_grpowned_p(mrb, self)))
     return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IROTH
   if (!(st->st_mode & S_IROTH))
     return mrb_false_value();
-#endif
   return mrb_true_value();
 }
 
@@ -462,18 +456,12 @@ stat_read_real_p(mrb_state *mrb, mrb_value self)
 
   if (getuid() == 0)
     return mrb_true_value();
-#ifdef S_IRUSR
   if (mrb_test(stat_rowned_p(mrb, self)))
     return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IRGRP
   if (mrb_group_member(mrb, get_stat(mrb, self)->st_gid))
     return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IROTH
   if (!(st->st_mode & S_IROTH))
     return mrb_false_value();
-#endif
   return mrb_true_value();
 }
 
@@ -484,18 +472,12 @@ stat_write_p(mrb_state *mrb, mrb_value self)
 
   if (geteuid() == 0)
     return mrb_true_value();
-#ifdef S_IRUSR
   if (mrb_test(stat_owned_p(mrb, self)))
     return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IRGRP
   if (mrb_test(stat_grpowned_p(mrb, self)))
     return st->st_mode & S_IWGRP ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IROTH
   if (!(st->st_mode & S_IWOTH))
     return mrb_false_value();
-#endif
   return mrb_true_value();
 }
 
@@ -506,18 +488,12 @@ stat_write_real_p(mrb_state *mrb, mrb_value self)
 
   if (getuid() == 0)
     return mrb_true_value();
-#ifdef S_IRUSR
   if (mrb_test(stat_rowned_p(mrb, self)))
     return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IRGRP
   if (mrb_group_member(mrb, get_stat(mrb, self)->st_gid))
     return st->st_mode & S_IWGRP ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IROTH
   if (!(st->st_mode & S_IWOTH))
     return mrb_false_value();
-#endif
   return mrb_true_value();
 }
 
@@ -528,18 +504,12 @@ stat_exec_p(mrb_state *mrb, mrb_value self)
 
   if (geteuid() == 0)
     return mrb_true_value();
-#ifdef S_IRUSR
   if (mrb_test(stat_owned_p(mrb, self)))
     return st->st_mode & S_IXUSR ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IRGRP
   if (mrb_test(stat_grpowned_p(mrb, self)))
     return st->st_mode & S_IXGRP ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IROTH
   if (!(st->st_mode & S_IXOTH))
     return mrb_false_value();
-#endif
   return mrb_true_value();
 }
 
@@ -550,18 +520,12 @@ stat_exec_real_p(mrb_state *mrb, mrb_value self)
 
   if (getuid() == 0)
     return mrb_true_value();
-#ifdef S_IRUSR
   if (mrb_test(stat_rowned_p(mrb, self)))
     return st->st_mode & S_IXUSR ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IRGRP
   if (mrb_group_member(mrb, get_stat(mrb, self)->st_gid))
     return st->st_mode & S_IXGRP ? mrb_true_value() : mrb_false_value();
-#endif
-#ifdef S_IROTH
   if (!(st->st_mode & S_IXOTH))
     return mrb_false_value();
-#endif
   return mrb_true_value();
 }
 

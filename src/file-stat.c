@@ -397,7 +397,7 @@ mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
    * So we don't trunk NGROUPS anymore.
    */
   while (groups <= MRB_MAX_GROUPS) {
-    gary = (GETGROUPS_T*)mrb_malloc(mrb, sizeof(GETGROUPS_T) * groups);
+    gary = (GETGROUPS_T*)mrb_malloc(mrb, sizeof(GETGROUPS_T) * (unsigned int)groups);
     anum = getgroups(groups, gary);
     if (anum != -1 && anum != groups)
       break;

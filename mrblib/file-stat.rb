@@ -38,6 +38,14 @@ class File
       end
     end
 
+    def owned?
+      uid == Process.euid
+    end
+
+    def owned_real?
+      uid == Process.uid
+    end
+
     def readable?
       if Process.euid == 0
         true

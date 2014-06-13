@@ -365,18 +365,6 @@ stat_inspect(mrb_state *mrb, mrb_value self)
   return str;
 }
 
-static mrb_value
-stat_owned_p(mrb_state *mrb, mrb_value self)
-{
-  return mrb_bool_value(get_stat(mrb, self)->st_uid == geteuid());
-}
-
-static mrb_value
-stat_rowned_p(mrb_state *mrb, mrb_value self)
-{
-  return mrb_bool_value(get_stat(mrb, self)->st_uid == getuid());
-}
-
 static int
 mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
 {
@@ -489,8 +477,6 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "blksize", stat_blksize, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "inspect", stat_inspect, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "owned_real?", stat_rowned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, stat, "IFMT", mrb_fixnum_value(S_IFMT));

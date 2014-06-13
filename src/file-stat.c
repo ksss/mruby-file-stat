@@ -16,6 +16,44 @@
 #define GETGROUPS_T gid_t
 #define MRB_MAX_GROUPS (65536)
 
+/**
+ * define default value when system not defined
+ */
+#ifndef S_IFMT
+# define S_IFMT 0170000
+#endif
+#ifndef S_IFSOCK
+# define S_IFSOCK 0140000
+#endif
+#ifndef S_IFLNK
+# define S_IFLNK 0120000
+#endif
+#ifndef S_IFREG
+# define S_IFREG 0100000
+#endif
+#ifndef S_IFBLK
+# define S_IFBLK 060000
+#endif
+#ifndef S_IFDIR
+# define S_IFDIR 040000
+#endif
+#ifndef S_IFCHR
+# define S_IFCHR 020000
+#endif
+#ifndef S_IFIFO
+# define S_IFIFO 010000
+#endif
+#ifndef S_ISUID
+# define S_ISUID 04000
+#endif
+#ifndef S_ISGID
+# define S_ISGID 02000
+#endif
+#ifndef S_ISVTX
+# define S_ISVTX 01000
+#endif
+
+
 struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_free };
 
 static struct stat *
@@ -529,93 +567,18 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 
-  mrb_define_const(mrb, stat, "S_IFMT",
-#ifdef S_IFMT
-      mrb_fixnum_value(S_IFMT)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_IFSOCK",
-#ifdef S_IFSOCK
-      mrb_fixnum_value(S_IFSOCK)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_IFLNK",
-#ifdef S_IFLNK
-      mrb_fixnum_value(S_IFLNK)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_IFREG",
-#ifdef S_IFREG
-      mrb_fixnum_value(S_IFREG)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_IFBLK",
-#ifdef S_IFBLK
-      mrb_fixnum_value(S_IFBLK)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_IFDIR",
-#ifdef S_IFDIR
-      mrb_fixnum_value(S_IFDIR)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_IFCHR",
-#ifdef S_IFCHR
-      mrb_fixnum_value(S_IFCHR)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_IFIFO",
-#ifdef S_IFIFO
-      mrb_fixnum_value(S_IFIFO)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_ISUID",
-#ifdef S_ISUID
-      mrb_fixnum_value(S_ISUID)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_ISGID",
-#ifdef S_ISGID
-      mrb_fixnum_value(S_ISGID)
-#else
-      mrb_nil_value()
-#endif
-  );
-
-  mrb_define_const(mrb, stat, "S_ISVTX",
-#ifdef S_ISVTX
-      mrb_fixnum_value(S_ISVTX)
-#else
-      mrb_nil_value()
-#endif
-  );
+  mrb_define_const(mrb, stat, "S_IFMT", mrb_fixnum_value(S_IFMT));
+  mrb_define_const(mrb, stat, "S_IFSOCK", mrb_fixnum_value(S_IFSOCK));
+  mrb_define_const(mrb, stat, "S_IFLNK", mrb_fixnum_value(S_IFLNK));
+  mrb_define_const(mrb, stat, "S_IFREG", mrb_fixnum_value(S_IFREG));
+  mrb_define_const(mrb, stat, "S_IFREG", mrb_fixnum_value(S_IFREG));
+  mrb_define_const(mrb, stat, "S_IFBLK", mrb_fixnum_value(S_IFBLK));
+  mrb_define_const(mrb, stat, "S_IFDIR", mrb_fixnum_value(S_IFDIR));
+  mrb_define_const(mrb, stat, "S_IFCHR", mrb_fixnum_value(S_IFCHR));
+  mrb_define_const(mrb, stat, "S_IFIFO", mrb_fixnum_value(S_IFIFO));
+  mrb_define_const(mrb, stat, "S_ISUID", mrb_fixnum_value(S_ISUID));
+  mrb_define_const(mrb, stat, "S_ISGID", mrb_fixnum_value(S_ISGID));
+  mrb_define_const(mrb, stat, "S_ISVTX", mrb_fixnum_value(S_ISVTX));
 }
 
 void

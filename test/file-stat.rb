@@ -30,12 +30,12 @@ end
 
 assert 'File::Stat#dev_major' do
   stat = File::Stat.new('README.md')
-  assert_include Fixnum, stat.dev_major.class
+  assert_equal Fixnum, stat.dev_major.class
 end
 
 assert 'File::Stat#dev_minor' do
   stat = File::Stat.new('README.md')
-  assert_include Fixnum, stat.dev_minor.class
+  assert_equal Fixnum, stat.dev_minor.class
 end
 
 assert 'File::Stat#ino' do
@@ -70,12 +70,12 @@ end
 
 assert 'File::Stat#rdev_major' do
   stat = File::Stat.new('README.md')
-  assert_include Fixnum, stat.rdev_major.class
+  assert_equal Fixnum, stat.rdev_major.class
 end
 
 assert 'File::Stat#rdev_minor' do
   stat = File::Stat.new('README.md')
-  assert_include Fixnum, stat.rdev_minor.class
+  assert_equal Fixnum, stat.rdev_minor.class
 end
 
 assert 'File::Stat#blocks' do

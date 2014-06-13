@@ -434,70 +434,6 @@ stat_grpowned_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-stat_read_p(mrb_state *mrb, mrb_value self)
-{
-  struct stat *st = get_stat(mrb, self);
-
-  if (geteuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_owned_p(mrb, self)))
-    return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_test(stat_grpowned_p(mrb, self)))
-    return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IROTH))
-    return mrb_false_value();
-  return mrb_true_value();
-}
-
-static mrb_value
-stat_read_real_p(mrb_state *mrb, mrb_value self)
-{
-  struct stat *st = get_stat(mrb, self);
-
-  if (getuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_rowned_p(mrb, self)))
-    return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_group_member(mrb, get_stat(mrb, self)->st_gid))
-    return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IROTH))
-    return mrb_false_value();
-  return mrb_true_value();
-}
-
-static mrb_value
-stat_write_p(mrb_state *mrb, mrb_value self)
-{
-  struct stat *st = get_stat(mrb, self);
-
-  if (geteuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_owned_p(mrb, self)))
-    return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_test(stat_grpowned_p(mrb, self)))
-    return st->st_mode & S_IWGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IWOTH))
-    return mrb_false_value();
-  return mrb_true_value();
-}
-
-static mrb_value
-stat_write_real_p(mrb_state *mrb, mrb_value self)
-{
-  struct stat *st = get_stat(mrb, self);
-
-  if (getuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_rowned_p(mrb, self)))
-    return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_group_member(mrb, get_stat(mrb, self)->st_gid))
-    return st->st_mode & S_IWGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IWOTH))
-    return mrb_false_value();
-  return mrb_true_value();
-}
-
-static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
   return mrb_fixnum_value((mrb_int)getuid());
@@ -553,10 +489,6 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "blksize", stat_blksize, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "inspect", stat_inspect, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "readable?", stat_read_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "readable_real?", stat_read_real_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "writable?", stat_write_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "writable_real?", stat_write_real_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "owned_real?", stat_rowned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());

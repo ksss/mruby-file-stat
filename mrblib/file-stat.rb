@@ -38,6 +38,54 @@ class File
       end
     end
 
+    def readable?
+      if Process.euid == 0
+        true
+      elsif owned?
+        (mode & IRUSR) != 0
+      elsif grpowned?
+        (mode & IRGRP) != 0
+      else
+        (mode & IROTH) == 0
+      end
+    end
+
+    def readable_real?
+      if Process.uid == 0
+        true
+      elsif owned_real?
+        (mode & IRUSR) != 0
+      elsif grpowned?
+        (mode & IRGRP) != 0
+      else
+        (mode & IROTH) == 0
+      end
+    end
+
+    def writable?
+      if Process.euid == 0
+        true
+      elsif owned?
+        (mode & IWUSR) != 0
+      elsif grpowned?
+        (mode & IWGRP) != 0
+      else
+        (mode & IWOTH) == 0
+      end
+    end
+
+    def writable_real?
+      if Process.uid == 0
+        true
+      elsif owned_real?
+        (mode & IWUSR) != 0
+      elsif grpowned?
+        (mode & IWGRP) != 0
+      else
+        (mode & IWOTH) == 0
+      end
+    end
+
     def executable?
       if Process.euid == 0
         (mode & IXUGO) != 0

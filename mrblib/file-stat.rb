@@ -33,14 +33,8 @@ class File
       pipe?:      IFIFO,
       socket?:    IFSOCK,
     }.each do |m, c|
-      if IFMT && c
-        define_method(m) do
-          (mode & IFMT) == c
-        end
-      else
-        define_method(m) do
-          nil
-        end
+      define_method(m) do
+        (mode & IFMT) == c
       end
     end
 

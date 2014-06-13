@@ -592,6 +592,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "executable?", stat_exec_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable_real?", stat_exec_real_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "owned_real?", stat_rowned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, stat, "IFMT", mrb_fixnum_value(S_IFMT));

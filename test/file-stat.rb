@@ -192,6 +192,11 @@ assert 'File::Stat#owned?' do
   assert_true stat.owned?
 end
 
+assert 'File::Stat#owned_real?' do
+  stat = File::Stat.new('README.md')
+  assert_true stat.owned_real?
+end
+
 assert 'File::Stat#grpowned?' do
   stat = File::Stat.new('README.md')
   assert_true stat.grpowned?

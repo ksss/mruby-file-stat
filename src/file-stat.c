@@ -605,33 +605,33 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 
-  mrb_define_const(mrb, stat, "S_IFMT", mrb_fixnum_value(S_IFMT));
-  mrb_define_const(mrb, stat, "S_IFSOCK", mrb_fixnum_value(S_IFSOCK));
-  mrb_define_const(mrb, stat, "S_IFLNK", mrb_fixnum_value(S_IFLNK));
-  mrb_define_const(mrb, stat, "S_IFREG", mrb_fixnum_value(S_IFREG));
-  mrb_define_const(mrb, stat, "S_IFREG", mrb_fixnum_value(S_IFREG));
-  mrb_define_const(mrb, stat, "S_IFBLK", mrb_fixnum_value(S_IFBLK));
-  mrb_define_const(mrb, stat, "S_IFDIR", mrb_fixnum_value(S_IFDIR));
-  mrb_define_const(mrb, stat, "S_IFCHR", mrb_fixnum_value(S_IFCHR));
-  mrb_define_const(mrb, stat, "S_IFIFO", mrb_fixnum_value(S_IFIFO));
-  mrb_define_const(mrb, stat, "S_ISUID", mrb_fixnum_value(S_ISUID));
-  mrb_define_const(mrb, stat, "S_ISGID", mrb_fixnum_value(S_ISGID));
-  mrb_define_const(mrb, stat, "S_ISVTX", mrb_fixnum_value(S_ISVTX));
+  mrb_define_const(mrb, stat, "IFMT", mrb_fixnum_value(S_IFMT));
+  mrb_define_const(mrb, stat, "IFSOCK", mrb_fixnum_value(S_IFSOCK));
+  mrb_define_const(mrb, stat, "IFLNK", mrb_fixnum_value(S_IFLNK));
+  mrb_define_const(mrb, stat, "IFREG", mrb_fixnum_value(S_IFREG));
+  mrb_define_const(mrb, stat, "IFREG", mrb_fixnum_value(S_IFREG));
+  mrb_define_const(mrb, stat, "IFBLK", mrb_fixnum_value(S_IFBLK));
+  mrb_define_const(mrb, stat, "IFDIR", mrb_fixnum_value(S_IFDIR));
+  mrb_define_const(mrb, stat, "IFCHR", mrb_fixnum_value(S_IFCHR));
+  mrb_define_const(mrb, stat, "IFIFO", mrb_fixnum_value(S_IFIFO));
+  mrb_define_const(mrb, stat, "ISUID", mrb_fixnum_value(S_ISUID));
+  mrb_define_const(mrb, stat, "ISGID", mrb_fixnum_value(S_ISGID));
+  mrb_define_const(mrb, stat, "ISVTX", mrb_fixnum_value(S_ISVTX));
 
-  mrb_define_const(mrb, stat, "S_IRWXU", mrb_fixnum_value(S_IRWXU));
-  mrb_define_const(mrb, stat, "S_IRUSR", mrb_fixnum_value(S_IRUSR));
-  mrb_define_const(mrb, stat, "S_IWUSR", mrb_fixnum_value(S_IWUSR));
-  mrb_define_const(mrb, stat, "S_IXUSR", mrb_fixnum_value(S_IXUSR));
+  mrb_define_const(mrb, stat, "IRWXU", mrb_fixnum_value(S_IRWXU));
+  mrb_define_const(mrb, stat, "IRUSR", mrb_fixnum_value(S_IRUSR));
+  mrb_define_const(mrb, stat, "IWUSR", mrb_fixnum_value(S_IWUSR));
+  mrb_define_const(mrb, stat, "IXUSR", mrb_fixnum_value(S_IXUSR));
 
-  mrb_define_const(mrb, stat, "S_IRWXG", mrb_fixnum_value(S_IRWXG));
-  mrb_define_const(mrb, stat, "S_IRGRP", mrb_fixnum_value(S_IRGRP));
-  mrb_define_const(mrb, stat, "S_IWGRP", mrb_fixnum_value(S_IWGRP));
-  mrb_define_const(mrb, stat, "S_IXGRP", mrb_fixnum_value(S_IXGRP));
+  mrb_define_const(mrb, stat, "IRWXG", mrb_fixnum_value(S_IRWXG));
+  mrb_define_const(mrb, stat, "IRGRP", mrb_fixnum_value(S_IRGRP));
+  mrb_define_const(mrb, stat, "IWGRP", mrb_fixnum_value(S_IWGRP));
+  mrb_define_const(mrb, stat, "IXGRP", mrb_fixnum_value(S_IXGRP));
 
-  mrb_define_const(mrb, stat, "S_IRWXO", mrb_fixnum_value(S_IRWXO));
-  mrb_define_const(mrb, stat, "S_IROTH", mrb_fixnum_value(S_IROTH));
-  mrb_define_const(mrb, stat, "S_IWOTH", mrb_fixnum_value(S_IWOTH));
-  mrb_define_const(mrb, stat, "S_IXOTH", mrb_fixnum_value(S_IXOTH));
+  mrb_define_const(mrb, stat, "IRWXO", mrb_fixnum_value(S_IRWXO));
+  mrb_define_const(mrb, stat, "IROTH", mrb_fixnum_value(S_IROTH));
+  mrb_define_const(mrb, stat, "IWOTH", mrb_fixnum_value(S_IWOTH));
+  mrb_define_const(mrb, stat, "IXOTH", mrb_fixnum_value(S_IXOTH));
 }
 
 void

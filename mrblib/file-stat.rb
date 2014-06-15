@@ -1,11 +1,6 @@
 class File
   class Stat
-    IRWXUGO = (IRWXU|IRWXG|IRWXO)
-    IALLUGO = (ISUID|ISGID|ISVTX|IRWXUGO)
-    IRUGO = (IRUSR|IRGRP|IROTH)
-    IWUGO = (IWUSR|IWGRP|IWOTH)
-    IXUGO = (IXUSR|IXGRP|IXOTH)
-
+    include File::Stat::Constants
     include Comparable
 
     def <=>(other)
@@ -24,23 +19,111 @@ class File
       size == 0
     end
 
-    {
-      symlink?:   IFLNK,
-      file?:      IFREG,
-      directory?: IFDIR,
-      chardev?:   IFCHR,
-      blockdev?:  IFBLK,
-      pipe?:      IFIFO,
-      socket?:    IFSOCK,
-    }.each do |m, c|
-      if IFMT && c
-        define_method(m) do
-          (mode & IFMT) == c
-        end
+    def symlink?
+      (mode & IFMT) == IFLNK
+    end
+
+    def file?
+      (mode & IFMT) == IFREG
+    end
+
+    def directory?
+      (mode & IFMT) == IFDIR
+    end
+
+    def chardev?
+      (mode & IFMT) == IFCHR
+    end
+
+    def blockdev?
+      (mode & IFMT) == IFBLK
+    end
+
+    def pipe?
+      (mode & IFMT) == IFIFO
+    end
+
+    def socket?
+      (mode & IFMT) == IFSOCK
+    end
+
+    def owned?
+      uid == Process.euid
+    end
+
+    def owned_real?
+      uid == Process.uid
+    end
+
+    def readable?
+      if Process.euid == 0
+        true
+      elsif owned?
+        (mode & IRUSR) != 0
+      elsif grpowned?
+        (mode & IRGRP) != 0
       else
-        define_method(m) do
-          nil
-        end
+        (mode & IROTH) == 0
+      end
+    end
+
+    def readable_real?
+      if Process.uid == 0
+        true
+      elsif owned_real?
+        (mode & IRUSR) != 0
+      elsif grpowned?
+        (mode & IRGRP) != 0
+      else
+        (mode & IROTH) == 0
+      end
+    end
+
+    def writable?
+      if Process.euid == 0
+        true
+      elsif owned?
+        (mode & IWUSR) != 0
+      elsif grpowned?
+        (mode & IWGRP) != 0
+      else
+        (mode & IWOTH) == 0
+      end
+    end
+
+    def writable_real?
+      if Process.uid == 0
+        true
+      elsif owned_real?
+        (mode & IWUSR) != 0
+      elsif grpowned?
+        (mode & IWGRP) != 0
+      else
+        (mode & IWOTH) == 0
+      end
+    end
+
+    def executable?
+      if Process.euid == 0
+        (mode & IXUGO) != 0
+      elsif owned?
+        (mode & IXUSR) != 0
+      elsif grpowned?
+        (mode & IXGRP) != 0
+      else
+        (mode & IXOTH) == 0
+      end
+    end
+
+    def executable_real?
+      if Process.uid == 0
+        (mode & IXUGO) != 0
+      elsif owned_real?
+        (mode & IXUSR) != 0
+      elsif grpowned?
+        (mode & IXGRP) != 0
+      else
+        (mode & IXOTH) == 0
       end
     end
 

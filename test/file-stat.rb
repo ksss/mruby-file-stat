@@ -162,11 +162,17 @@ end
 assert 'File::Stat#executable?' do
   stat = File::Stat.new('README.md')
   assert_false stat.executable?
+
+  stat = File::Stat.new('minirake')
+  assert_true stat.executable?
 end
 
 assert 'File::Stat#writable_real?' do
   stat = File::Stat.new('README.md')
   assert_false stat.executable_real?
+
+  stat = File::Stat.new('minirake')
+  assert_true stat.executable_real?
 end
 
 assert 'File::Stat#file?' do
@@ -190,6 +196,11 @@ end
 assert 'File::Stat#owned?' do
   stat = File::Stat.new('README.md')
   assert_true stat.owned?
+end
+
+assert 'File::Stat#owned_real?' do
+  stat = File::Stat.new('README.md')
+  assert_true stat.owned_real?
 end
 
 assert 'File::Stat#grpowned?' do

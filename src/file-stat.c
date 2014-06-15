@@ -16,81 +16,7 @@
 #define GETGROUPS_T gid_t
 #define MRB_MAX_GROUPS (65536)
 
-/**
- * define default value when system not defined
- */
-#ifndef S_IFMT
-# define S_IFMT 0170000
-#endif
-#ifndef S_IFSOCK
-# define S_IFSOCK 0140000
-#endif
-#ifndef S_IFLNK
-# define S_IFLNK 0120000
-#endif
-#ifndef S_IFREG
-# define S_IFREG 0100000
-#endif
-#ifndef S_IFBLK
-# define S_IFBLK 060000
-#endif
-#ifndef S_IFDIR
-# define S_IFDIR 040000
-#endif
-#ifndef S_IFCHR
-# define S_IFCHR 020000
-#endif
-#ifndef S_IFIFO
-# define S_IFIFO 010000
-#endif
-#ifndef S_ISUID
-# define S_ISUID 04000
-#endif
-#ifndef S_ISGID
-# define S_ISGID 02000
-#endif
-#ifndef S_ISVTX
-# define S_ISVTX 01000
-#endif
-
-#ifndef S_IRWXU
-# define S_IRWXU 0700
-#endif
-#ifndef S_IRUSR
-# define S_IRUSR 0400
-#endif
-#ifndef S_IWUSR
-# define S_IWUSR 0200
-#endif
-#ifndef S_IXUSR
-# define S_IXUSR 0100
-#endif
-
-#ifndef S_IRWXG
-# define S_IRWXG 070
-#endif
-#ifndef S_IRGRP
-# define S_IRGRP 040
-#endif
-#ifndef S_IWGRP
-# define S_IWGRP 020
-#endif
-#ifndef S_IXGRP
-# define S_IXGRP 010
-#endif
-
-#ifndef S_IRWXO
-# define S_IRWXO 07
-#endif
-#ifndef S_IROTH
-# define S_IROTH 04
-#endif
-#ifndef S_IWOTH
-# define S_IWOTH 02
-#endif
-#ifndef S_IXOTH
-# define S_IXOTH 01
-#endif
+#include "constants.h"
 
 struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_free };
 
@@ -365,18 +291,6 @@ stat_inspect(mrb_state *mrb, mrb_value self)
   return str;
 }
 
-static mrb_value
-stat_owned_p(mrb_state *mrb, mrb_value self)
-{
-  return mrb_bool_value(get_stat(mrb, self)->st_uid == geteuid());
-}
-
-static mrb_value
-stat_rowned_p(mrb_state *mrb, mrb_value self)
-{
-  return mrb_bool_value(get_stat(mrb, self)->st_uid == getuid());
-}
-
 static int
 mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
 {
@@ -397,7 +311,7 @@ mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
    * So we don't trunk NGROUPS anymore.
    */
   while (groups <= MRB_MAX_GROUPS) {
-    gary = (GETGROUPS_T*)mrb_malloc(mrb, sizeof(GETGROUPS_T) * groups);
+    gary = (GETGROUPS_T*)mrb_malloc(mrb, sizeof(GETGROUPS_T) * (unsigned int)groups);
     anum = getgroups(groups, gary);
     if (anum != -1 && anum != groups)
       break;
@@ -434,99 +348,27 @@ stat_grpowned_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-stat_read_p(mrb_state *mrb, mrb_value self)
+process_getuid(mrb_state *mrb, mrb_value mod)
 {
-  struct stat *st = get_stat(mrb, self);
-
-  if (geteuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_owned_p(mrb, self)))
-    return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_test(stat_grpowned_p(mrb, self)))
-    return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IROTH))
-    return mrb_false_value();
-  return mrb_true_value();
+  return mrb_fixnum_value((mrb_int)getuid());
 }
 
 static mrb_value
-stat_read_real_p(mrb_state *mrb, mrb_value self)
+process_getgid(mrb_state *mrb, mrb_value mod)
 {
-  struct stat *st = get_stat(mrb, self);
-
-  if (getuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_rowned_p(mrb, self)))
-    return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_group_member(mrb, get_stat(mrb, self)->st_gid))
-    return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IROTH))
-    return mrb_false_value();
-  return mrb_true_value();
+  return mrb_fixnum_value((mrb_int)getgid());
 }
 
 static mrb_value
-stat_write_p(mrb_state *mrb, mrb_value self)
+process_geteuid(mrb_state *mrb, mrb_value mod)
 {
-  struct stat *st = get_stat(mrb, self);
-
-  if (geteuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_owned_p(mrb, self)))
-    return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_test(stat_grpowned_p(mrb, self)))
-    return st->st_mode & S_IWGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IWOTH))
-    return mrb_false_value();
-  return mrb_true_value();
+  return mrb_fixnum_value((mrb_int)geteuid());
 }
 
 static mrb_value
-stat_write_real_p(mrb_state *mrb, mrb_value self)
+process_getegid(mrb_state *mrb, mrb_value mod)
 {
-  struct stat *st = get_stat(mrb, self);
-
-  if (getuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_rowned_p(mrb, self)))
-    return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_group_member(mrb, get_stat(mrb, self)->st_gid))
-    return st->st_mode & S_IWGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IWOTH))
-    return mrb_false_value();
-  return mrb_true_value();
-}
-
-static mrb_value
-stat_exec_p(mrb_state *mrb, mrb_value self)
-{
-  struct stat *st = get_stat(mrb, self);
-
-  if (geteuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_owned_p(mrb, self)))
-    return st->st_mode & S_IXUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_test(stat_grpowned_p(mrb, self)))
-    return st->st_mode & S_IXGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IXOTH))
-    return mrb_false_value();
-  return mrb_true_value();
-}
-
-static mrb_value
-stat_exec_real_p(mrb_state *mrb, mrb_value self)
-{
-  struct stat *st = get_stat(mrb, self);
-
-  if (getuid() == 0)
-    return mrb_true_value();
-  if (mrb_test(stat_rowned_p(mrb, self)))
-    return st->st_mode & S_IXUSR ? mrb_true_value() : mrb_false_value();
-  if (mrb_group_member(mrb, get_stat(mrb, self)->st_gid))
-    return st->st_mode & S_IXGRP ? mrb_true_value() : mrb_false_value();
-  if (!(st->st_mode & S_IXOTH))
-    return mrb_false_value();
-  return mrb_true_value();
+  return mrb_fixnum_value((mrb_int)getegid());
 }
 
 void
@@ -535,6 +377,8 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   struct RClass *io = mrb_define_class(mrb, "IO", mrb->object_class);
   struct RClass *file = mrb_define_class(mrb, "File", io);
   struct RClass *stat = mrb_define_class_under(mrb, file, "Stat", mrb->object_class);
+  struct RClass *constants = mrb_define_module_under(mrb, stat, "Constants");
+  struct RClass *process = mrb_define_module(mrb, "Process");
 
   MRB_SET_INSTANCE_TT(stat, MRB_TT_DATA);
 
@@ -560,42 +404,40 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "blksize", stat_blksize, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "inspect", stat_inspect, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "readable?", stat_read_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "readable_real?", stat_read_real_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "writable?", stat_write_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "writable_real?", stat_write_real_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "executable?", stat_exec_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "executable_real?", stat_exec_real_p, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 
-  mrb_define_const(mrb, stat, "IFMT", mrb_fixnum_value(S_IFMT));
-  mrb_define_const(mrb, stat, "IFSOCK", mrb_fixnum_value(S_IFSOCK));
-  mrb_define_const(mrb, stat, "IFLNK", mrb_fixnum_value(S_IFLNK));
-  mrb_define_const(mrb, stat, "IFREG", mrb_fixnum_value(S_IFREG));
-  mrb_define_const(mrb, stat, "IFREG", mrb_fixnum_value(S_IFREG));
-  mrb_define_const(mrb, stat, "IFBLK", mrb_fixnum_value(S_IFBLK));
-  mrb_define_const(mrb, stat, "IFDIR", mrb_fixnum_value(S_IFDIR));
-  mrb_define_const(mrb, stat, "IFCHR", mrb_fixnum_value(S_IFCHR));
-  mrb_define_const(mrb, stat, "IFIFO", mrb_fixnum_value(S_IFIFO));
-  mrb_define_const(mrb, stat, "ISUID", mrb_fixnum_value(S_ISUID));
-  mrb_define_const(mrb, stat, "ISGID", mrb_fixnum_value(S_ISGID));
-  mrb_define_const(mrb, stat, "ISVTX", mrb_fixnum_value(S_ISVTX));
+  mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));
+  mrb_define_const(mrb, constants, "IFSOCK", mrb_fixnum_value(S_IFSOCK));
+  mrb_define_const(mrb, constants, "IFLNK", mrb_fixnum_value(S_IFLNK));
+  mrb_define_const(mrb, constants, "IFREG", mrb_fixnum_value(S_IFREG));
+  mrb_define_const(mrb, constants, "IFREG", mrb_fixnum_value(S_IFREG));
+  mrb_define_const(mrb, constants, "IFBLK", mrb_fixnum_value(S_IFBLK));
+  mrb_define_const(mrb, constants, "IFDIR", mrb_fixnum_value(S_IFDIR));
+  mrb_define_const(mrb, constants, "IFCHR", mrb_fixnum_value(S_IFCHR));
+  mrb_define_const(mrb, constants, "IFIFO", mrb_fixnum_value(S_IFIFO));
+  mrb_define_const(mrb, constants, "ISUID", mrb_fixnum_value(S_ISUID));
+  mrb_define_const(mrb, constants, "ISGID", mrb_fixnum_value(S_ISGID));
+  mrb_define_const(mrb, constants, "ISVTX", mrb_fixnum_value(S_ISVTX));
 
-  mrb_define_const(mrb, stat, "IRWXU", mrb_fixnum_value(S_IRWXU));
-  mrb_define_const(mrb, stat, "IRUSR", mrb_fixnum_value(S_IRUSR));
-  mrb_define_const(mrb, stat, "IWUSR", mrb_fixnum_value(S_IWUSR));
-  mrb_define_const(mrb, stat, "IXUSR", mrb_fixnum_value(S_IXUSR));
+  mrb_define_const(mrb, constants, "IRWXU", mrb_fixnum_value(S_IRWXU));
+  mrb_define_const(mrb, constants, "IRUSR", mrb_fixnum_value(S_IRUSR));
+  mrb_define_const(mrb, constants, "IWUSR", mrb_fixnum_value(S_IWUSR));
+  mrb_define_const(mrb, constants, "IXUSR", mrb_fixnum_value(S_IXUSR));
 
-  mrb_define_const(mrb, stat, "IRWXG", mrb_fixnum_value(S_IRWXG));
-  mrb_define_const(mrb, stat, "IRGRP", mrb_fixnum_value(S_IRGRP));
-  mrb_define_const(mrb, stat, "IWGRP", mrb_fixnum_value(S_IWGRP));
-  mrb_define_const(mrb, stat, "IXGRP", mrb_fixnum_value(S_IXGRP));
+  mrb_define_const(mrb, constants, "IRWXG", mrb_fixnum_value(S_IRWXG));
+  mrb_define_const(mrb, constants, "IRGRP", mrb_fixnum_value(S_IRGRP));
+  mrb_define_const(mrb, constants, "IWGRP", mrb_fixnum_value(S_IWGRP));
+  mrb_define_const(mrb, constants, "IXGRP", mrb_fixnum_value(S_IXGRP));
 
-  mrb_define_const(mrb, stat, "IRWXO", mrb_fixnum_value(S_IRWXO));
-  mrb_define_const(mrb, stat, "IROTH", mrb_fixnum_value(S_IROTH));
-  mrb_define_const(mrb, stat, "IWOTH", mrb_fixnum_value(S_IWOTH));
-  mrb_define_const(mrb, stat, "IXOTH", mrb_fixnum_value(S_IXOTH));
+  mrb_define_const(mrb, constants, "IRWXO", mrb_fixnum_value(S_IRWXO));
+  mrb_define_const(mrb, constants, "IROTH", mrb_fixnum_value(S_IROTH));
+  mrb_define_const(mrb, constants, "IWOTH", mrb_fixnum_value(S_IWOTH));
+  mrb_define_const(mrb, constants, "IXOTH", mrb_fixnum_value(S_IXOTH));
+
+  mrb_define_class_method(mrb, process, "uid", process_getuid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process, "gid", process_getgid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process, "euid", process_geteuid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, process, "egid", process_getegid, MRB_ARGS_NONE());
 }
 
 void

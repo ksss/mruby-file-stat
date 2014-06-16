@@ -146,17 +146,14 @@ class File
     end
 
     def setuid?
-      return nil unless ISUID
       (mode & ISUID) != 0
     end
 
     def setgid?
-      return nil unless ISGID
       (mode & ISGID) != 0
     end
 
     def sticky?
-      return nil unless ISVTX
       (mode & ISVTX) != 0
     end
 
@@ -179,8 +176,6 @@ class File
       else
         "unknown"
       end
-    rescue TypeError
-      "unknown"
     end
   end
 end

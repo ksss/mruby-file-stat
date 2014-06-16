@@ -17,6 +17,7 @@
 #define MRB_MAX_GROUPS (65536)
 
 #include "constants.h"
+#include "extconf.h"
 
 struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_free };
 

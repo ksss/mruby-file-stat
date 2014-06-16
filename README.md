@@ -1,5 +1,7 @@
 # mruby-file-stat
 
+[![Build Status](https://travis-ci.org/ksss/mruby-file-stat.svg?branch=master)](https://travis-ci.org/ksss/mruby-file-stat)
+
 **File::Stat** class in mruby
 
 ```ruby

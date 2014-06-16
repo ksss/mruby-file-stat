@@ -5,9 +5,10 @@ class File
 
     def <=>(other)
       if other.kind_of?(self.class)
-        return self.mtime <=> other.mtime
+        self.mtime <=> other.mtime
+      else
+        nil
       end
-      nil
     end
 
     def size?
@@ -59,11 +60,11 @@ class File
       if Process.euid == 0
         true
       elsif owned?
-        (mode & IRUSR) != 0
+        (mode & IRUSR) == IRUSR
       elsif grpowned?
-        (mode & IRGRP) != 0
+        (mode & IRGRP) == IRGRP
       else
-        (mode & IROTH) == 0
+        (mode & IROTH) != IROTH
       end
     end
 
@@ -71,11 +72,11 @@ class File
       if Process.uid == 0
         true
       elsif owned_real?
-        (mode & IRUSR) != 0
+        (mode & IRUSR) == IRUSR
       elsif grpowned?
-        (mode & IRGRP) != 0
+        (mode & IRGRP) == IRGRP
       else
-        (mode & IROTH) == 0
+        (mode & IROTH) == IROTH
       end
     end
 
@@ -83,11 +84,11 @@ class File
       if Process.euid == 0
         true
       elsif owned?
-        (mode & IWUSR) != 0
+        (mode & IWUSR) == IWUSR
       elsif grpowned?
-        (mode & IWGRP) != 0
+        (mode & IWGRP) == IWGRP
       else
-        (mode & IWOTH) == 0
+        (mode & IWOTH) == IWOTH
       end
     end
 
@@ -95,35 +96,35 @@ class File
       if Process.uid == 0
         true
       elsif owned_real?
-        (mode & IWUSR) != 0
+        (mode & IWUSR) == IWUSR
       elsif grpowned?
-        (mode & IWGRP) != 0
+        (mode & IWGRP) == IWGRP
       else
-        (mode & IWOTH) == 0
+        (mode & IWOTH) == IWOTH
       end
     end
 
     def executable?
       if Process.euid == 0
-        (mode & IXUGO) != 0
+        (mode & IXUGO) == IXUGO
       elsif owned?
-        (mode & IXUSR) != 0
+        (mode & IXUSR) == IXUSR
       elsif grpowned?
-        (mode & IXGRP) != 0
+        (mode & IXGRP) == IXGRP
       else
-        (mode & IXOTH) == 0
+        (mode & IXOTH) == IXOTH
       end
     end
 
     def executable_real?
       if Process.uid == 0
-        (mode & IXUGO) != 0
+        (mode & IXUGO) == IXUGO
       elsif owned_real?
-        (mode & IXUSR) != 0
+        (mode & IXUSR) == IXUSR
       elsif grpowned?
-        (mode & IXGRP) != 0
+        (mode & IXGRP) == IXGRP
       else
-        (mode & IXOTH) == 0
+        (mode & IXOTH) == IXOTH
       end
     end
 
@@ -146,15 +147,15 @@ class File
     end
 
     def setuid?
-      (mode & ISUID) != 0
+      (mode & ISUID) == ISUID
     end
 
     def setgid?
-      (mode & ISGID) != 0
+      (mode & ISGID) == ISGID
     end
 
     def sticky?
-      (mode & ISVTX) != 0
+      (mode & ISVTX) == ISVTX
     end
 
     def ftype

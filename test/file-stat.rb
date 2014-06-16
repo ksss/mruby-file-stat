@@ -21,6 +21,8 @@ assert 'File::Stat#<=>' do
   stat1 = File::Stat.new('README.md')
   stat2 = File::Stat.new('README.md')
   assert_equal 0, stat1.<=>(stat2)
+  assert_equal nil, stat1.<=>(1)
+  assert_raise(ArgumentError) { stat1 < 1 }
 end
 
 assert 'File::Stat#dev' do

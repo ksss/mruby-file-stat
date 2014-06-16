@@ -64,7 +64,7 @@ class File
       elsif grpowned?
         (mode & IRGRP) == IRGRP
       else
-        (mode & IROTH) != IROTH
+        (mode & IROTH) == IROTH
       end
     end
 

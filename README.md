@@ -35,3 +35,6 @@ end
 
 See [https://github.com/ruby/ruby/blob/trunk/file.c](https://github.com/ruby/ruby/blob/trunk/file.c)
 
+## Doc
+
+[http://ruby-doc.org/core-2.1.0/File/Stat.html](http://ruby-doc.org/core-2.1.0/File/Stat.html)

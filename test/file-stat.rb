@@ -102,7 +102,11 @@ end
 
 assert 'File::Stat#birthtime' do
   stat = File::Stat.new('README.md')
-  assert_true 0 < stat.birthtime
+  begin
+    assert_true 0 < stat.birthtime
+  rescue NotImplementedError
+    skip
+  end
 end
 
 assert 'File::Stat#size' do

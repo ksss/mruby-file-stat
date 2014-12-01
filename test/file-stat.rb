@@ -100,6 +100,15 @@ assert 'File::Stat#ctime' do
   assert_true 0 < stat.ctime
 end
 
+assert 'File::Stat#birthtime' do
+  stat = File::Stat.new('README.md')
+  begin
+    assert_true 0 < stat.birthtime
+  rescue NotImplementedError
+    skip
+  end
+end
+
 assert 'File::Stat#size' do
   stat = File::Stat.new('README.md')
   assert_true 0 < stat.size

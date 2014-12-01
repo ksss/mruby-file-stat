@@ -231,7 +231,7 @@ stat_birthtime(mrb_state *mrb, mrb_value self)
 # define stat_birthtime stat_ctime
 #else
 # define stat_birthtime mrb_notimplement_m
-# undef HAVE_STRUCT_STAT_ST_BIRTHTIME
+# undef HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC
 #endif
 
 static mrb_value
@@ -273,7 +273,7 @@ stat_inspect(mrb_state *mrb, mrb_value self)
     {"atime",   stat_atime},
     {"mtime",   stat_mtime},
     {"ctime",   stat_ctime},
-#ifdef HAVE_STRUCT_STAT_ST_BIRTHTIME
+#ifdef HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC
     {"birthtime", stat_birthtime},
 #endif
   };

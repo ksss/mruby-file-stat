@@ -150,10 +150,7 @@ stat_dev_minor(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_ino(mrb_state *mrb, mrb_value self)
 {
-  ino_t ino = get_stat(mrb, self)->st_ino;
-  if (ino <= MRB_INT_MAX)
-    return mrb_fixnum_value((mrb_int)ino);
-  return mrb_nil_value();
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_ino);
 }
 
 static mrb_value
@@ -171,19 +168,13 @@ stat_nlink(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_uid(mrb_state *mrb, mrb_value self)
 {
-  uid_t uid = get_stat(mrb, self)->st_uid;
-  if (uid <= MRB_INT_MAX)
-    return mrb_fixnum_value((mrb_int)uid);
-  return mrb_nil_value();
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_uid);
 }
 
 static mrb_value
 stat_gid(mrb_state *mrb, mrb_value self)
 {
-  gid_t gid = get_stat(mrb, self)->st_gid;
-  if (gid <= MRB_INT_MAX)
-    return mrb_fixnum_value((mrb_int)gid);
-  return mrb_nil_value();
+  return mrb_ll2num(mrb, get_stat(mrb, self)->st_gid);
 }
 
 static mrb_value

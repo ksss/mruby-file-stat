@@ -42,7 +42,7 @@ end
 
 assert 'File::Stat#ino' do
   stat = File::Stat.new('README.md')
-  assert_kind_of Fixnum, stat.ino
+  assert_kind_of Numeric, stat.ino
 end
 
 assert 'File::Stat#mode' do
@@ -57,12 +57,12 @@ end
 
 assert 'File::Stat#uid' do
   stat = File::Stat.new('README.md')
-  assert_kind_of Fixnum, stat.uid
+  assert_kind_of Numeric, stat.uid
 end
 
 assert 'File::Stat#gid' do
   stat = File::Stat.new('README.md')
-  assert_kind_of Fixnum, stat.gid
+  assert_kind_of Numeric, stat.gid
 end
 
 assert 'File::Stat#rdev' do

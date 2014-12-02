@@ -6,49 +6,55 @@
 
 ```ruby
 stat = File::Stat.new('filename') # or File.stat('filename')
-p stat.dev #=> device id
-p stat.dev_major #=> device major id
-p stat.dev_minor #=> device minor id
-p stat.ino #=> i-node number
-p stat.mode #=> permission value (st_mode)
-p stat.nlink #=> hard link count
-p stat.uid #=> user id
-p stat.gid #=> group id
-p stat.rdev #=> device type
-p stat.rdev_major #=> rdev major id
-p stat.rdev_minor #=> rdev minor id
-p stat.atime #=> last access time
-p stat.mtime #=> last modify time
-p stat.ctime #=> last change attribute time
-p stat.birthtime #=> file created time
-p stat.size #=> file size(byte)
-p stat.blksize #=> file I/O block size
-p stat.blocks #=> attached block num
-p stat.grpowned #=> same gid?
-p stat.<=> #=> comparate mtime (-1,0,1 or nil)
-p stat.size?
-p stat.zero?
-p stat.symlink?
-p stat.file?
-p stat.directory?
-p stat.chardev?
-p stat.blockdev?
-p stat.pipe?
-p stat.socket?
-p stat.owned?
-p stat.owned_real?
-p stat.readable?
-p stat.readable_real?
-p stat.writable?
-p stat.writable_real?
-p stat.executable?
-p stat.executable_real?
-p stat.world_readable?
-p stat.world_writable?
-p stat.setuid?
-p stat.setgid?
-p stat.sticky?
-p stat.ftype #=> socket, link, file, blockSpecial, directory, characterSpecial, fifo or unknown
+stat.dev #=> device id
+stat.dev_major #=> device major id
+stat.dev_minor #=> device minor id
+stat.ino #=> i-node number
+stat.mode #=> permission value (st_mode)
+stat.nlink #=> hard link count
+stat.uid #=> user id
+stat.gid #=> group id
+stat.rdev #=> device type
+stat.rdev_major #=> rdev major id
+stat.rdev_minor #=> rdev minor id
+stat.atime #=> last access time
+stat.mtime #=> last modify time
+stat.ctime #=> last change attribute time
+stat.birthtime #=> file created time
+stat.size #=> file size(byte)
+stat.blksize #=> file I/O block size
+stat.blocks #=> attached block num
+stat.grpowned #=> same gid?
+stat.<=> #=> comparate mtime (-1,0,1 or nil)
+stat.size?
+stat.zero?
+stat.symlink?
+stat.file?
+stat.directory?
+stat.chardev?
+stat.blockdev?
+stat.pipe?
+stat.socket?
+stat.owned?
+stat.owned_real?
+stat.readable?
+stat.readable_real?
+stat.writable?
+stat.writable_real?
+stat.executable?
+stat.executable_real?
+stat.world_readable?
+stat.world_writable?
+stat.setuid?
+stat.setgid?
+stat.sticky?
+stat.ftype #=> socket, link, file, blockSpecial, directory, characterSpecial, fifo or unknown
+
+# support methods
+Process.uid
+Process.gid
+Process.euid
+Process.egid
 ```
 
 This library is wrap of struct stat.

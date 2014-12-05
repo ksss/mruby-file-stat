@@ -204,34 +204,39 @@ stat_rdev_minor(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+time_at_with_sec(mrb_state *mrb, long long sec)
+{
+  return mrb_funcall(mrb, mrb_obj_value(mrb_class_get(mrb, "Time")), "at", 1, mrb_ll2num(mrb, sec));
+}
+
+static mrb_value
 stat_atime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_atime);
+  return time_at_with_sec(mrb, get_stat(mrb, self)->st_atime);
 }
 
 static mrb_value
 stat_mtime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_mtime);
+  return time_at_with_sec(mrb, get_stat(mrb, self)->st_mtime);
 }
 
 static mrb_value
 stat_ctime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_ctime);
+  return time_at_with_sec(mrb, get_stat(mrb, self)->st_ctime);
 }
 
 #if defined(HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC)
 static mrb_value
 stat_birthtime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_birthtimespec.tv_sec);
+  return time_at_with_sec(mrb, get_stat(mrb, self)->st_birthtimespec.tv_sec);
 }
+# define HAVE_METHOD_BIRTHTIME 1
 #elif defined(_WIN32)
 # define stat_birthtime stat_ctime
-#else
-# define stat_birthtime mrb_notimplement_m
-# undef HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC
+# define HAVE_METHOD_BIRTHTIME 1
 #endif
 
 static mrb_value
@@ -250,53 +255,6 @@ static mrb_value
 stat_blocks(mrb_state *mrb, mrb_value self)
 {
   return mrb_ll2num(mrb, get_stat(mrb, self)->st_blocks);
-}
-
-static mrb_value
-stat_inspect(mrb_state *mrb, mrb_value self)
-{
-  mrb_value str;
-  static const struct {
-    const char *name;
-    mrb_value (*func)(mrb_state*, mrb_value);
-  } member [] = {
-    {"dev",     stat_dev},
-    {"ino",     stat_ino},
-    {"mode",    stat_mode},
-    {"nlink",   stat_nlink},
-    {"uid",     stat_uid},
-    {"gid",     stat_gid},
-    {"rdev",    stat_rdev},
-    {"size",    stat_size},
-    {"blksize", stat_blksize},
-    {"blocks",  stat_blocks},
-    {"atime",   stat_atime},
-    {"mtime",   stat_mtime},
-    {"ctime",   stat_ctime},
-#ifdef HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC
-    {"birthtime", stat_birthtime},
-#endif
-  };
-  struct stat *st = get_stat(mrb, self);
-  int i;
-
-  if (!st) {
-    return mrb_str_new_cstr(mrb, "#<File::Stat uninitialized>");
-  }
-
-  str = mrb_str_new_cstr(mrb, "#<");
-  mrb_str_cat_cstr(mrb, str, mrb_obj_classname(mrb, self));
-  mrb_str_cat_cstr(mrb, str, " ");
-  for (i = 0; i < sizeof(member)/sizeof(member[0]); i++) {
-    if (0 < i) {
-      mrb_str_cat_cstr(mrb, str, ", ");
-    }
-    mrb_str_cat_cstr(mrb, str, member[i].name);
-    mrb_str_cat_cstr(mrb, str, "=");
-    mrb_str_concat(mrb, str, mrb_funcall(mrb, member[i].func(mrb, self), "inspect", 0));
-  }
-  mrb_str_cat_cstr(mrb, str, ">");
-  return str;
 }
 
 static int
@@ -408,11 +366,12 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "atime", stat_atime, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "mtime", stat_mtime, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "ctime", stat_ctime, MRB_ARGS_NONE());
+#ifdef HAVE_METHOD_BIRTHTIME
   mrb_define_method(mrb, stat, "birthtime", stat_birthtime, MRB_ARGS_NONE());
+#endif
   mrb_define_method(mrb, stat, "size", stat_size, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blksize", stat_blksize, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "inspect", stat_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));

@@ -87,25 +87,25 @@ end
 
 assert 'File::Stat#atime' do
   stat = File::Stat.new('README.md')
-  assert_true 0 < stat.atime
+  assert_kind_of Time, stat.atime
 end
 
 assert 'File::Stat#mtime' do
   stat = File::Stat.new('README.md')
-  assert_true 0 < stat.mtime
+  assert_kind_of Time, stat.mtime
 end
 
 assert 'File::Stat#ctime' do
   stat = File::Stat.new('README.md')
-  assert_true 0 < stat.ctime
+  assert_kind_of Time, stat.ctime
 end
 
 assert 'File::Stat#birthtime' do
   stat = File::Stat.new('README.md')
   begin
-    assert_true 0 < stat.birthtime
-  rescue NotImplementedError
-    skip
+    assert_kind_of Time, stat.birthtime
+  rescue NameError
+    skip 'This system not support `struct stat.birthtimespec`'
   end
 end
 

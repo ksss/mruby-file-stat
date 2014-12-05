@@ -204,28 +204,34 @@ stat_rdev_minor(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+time_at_with_sec(mrb_state *mrb, long long sec)
+{
+  return mrb_funcall(mrb, mrb_obj_value(mrb_class_get(mrb, "Time")), "at", 1, mrb_ll2num(mrb, sec));
+}
+
+static mrb_value
 stat_atime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_atime);
+  return time_at_with_sec(mrb, get_stat(mrb, self)->st_atime);
 }
 
 static mrb_value
 stat_mtime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_mtime);
+  return time_at_with_sec(mrb, get_stat(mrb, self)->st_mtime);
 }
 
 static mrb_value
 stat_ctime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_ctime);
+  return time_at_with_sec(mrb, get_stat(mrb, self)->st_ctime);
 }
 
 #if defined(HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC)
 static mrb_value
 stat_birthtime(mrb_state *mrb, mrb_value self)
 {
-  return mrb_ll2num(mrb, get_stat(mrb, self)->st_birthtimespec.tv_sec);
+  return time_at_with_sec(mrb, get_stat(mrb, self)->st_birthtimespec.tv_sec);
 }
 # define HAVE_METHOD_BIRTHTIME 1
 #elif defined(_WIN32)

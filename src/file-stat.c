@@ -251,53 +251,6 @@ stat_blocks(mrb_state *mrb, mrb_value self)
   return mrb_ll2num(mrb, get_stat(mrb, self)->st_blocks);
 }
 
-static mrb_value
-stat_inspect(mrb_state *mrb, mrb_value self)
-{
-  mrb_value str;
-  static const struct {
-    const char *name;
-    mrb_value (*func)(mrb_state*, mrb_value);
-  } member [] = {
-    {"dev",     stat_dev},
-    {"ino",     stat_ino},
-    {"mode",    stat_mode},
-    {"nlink",   stat_nlink},
-    {"uid",     stat_uid},
-    {"gid",     stat_gid},
-    {"rdev",    stat_rdev},
-    {"size",    stat_size},
-    {"blksize", stat_blksize},
-    {"blocks",  stat_blocks},
-    {"atime",   stat_atime},
-    {"mtime",   stat_mtime},
-    {"ctime",   stat_ctime},
-#ifdef HAVE_METHOD_BIRTHTIME
-    {"birthtime", stat_birthtime},
-#endif
-  };
-  struct stat *st = get_stat(mrb, self);
-  int i;
-
-  if (!st) {
-    return mrb_str_new_cstr(mrb, "#<File::Stat uninitialized>");
-  }
-
-  str = mrb_str_new_cstr(mrb, "#<");
-  mrb_str_cat_cstr(mrb, str, mrb_obj_classname(mrb, self));
-  mrb_str_cat_cstr(mrb, str, " ");
-  for (i = 0; i < sizeof(member)/sizeof(member[0]); i++) {
-    if (0 < i) {
-      mrb_str_cat_cstr(mrb, str, ", ");
-    }
-    mrb_str_cat_cstr(mrb, str, member[i].name);
-    mrb_str_cat_cstr(mrb, str, "=");
-    mrb_str_concat(mrb, str, mrb_funcall(mrb, member[i].func(mrb, self), "inspect", 0));
-  }
-  mrb_str_cat_cstr(mrb, str, ">");
-  return str;
-}
-
 static int
 mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
 {
@@ -413,7 +366,6 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "size", stat_size, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blksize", stat_blksize, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
-  mrb_define_method(mrb, stat, "inspect", stat_inspect, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));

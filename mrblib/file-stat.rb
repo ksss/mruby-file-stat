@@ -32,7 +32,7 @@ class File
         'blocks' => blocks,
         'atime' => atime,
         'mtime' => mtime,
-        'atime' => ctime,
+        'ctime' => ctime,
       }
       if respond_to? :birthtime
         stats['birthtime'] = birthtime

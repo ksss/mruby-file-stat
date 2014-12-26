@@ -121,7 +121,9 @@ end
 
 assert 'File::Stat#inspect' do
   stat = File::Stat.new('README.md')
-  assert_kind_of String, stat.inspect
+  %w(dev ino mode nlink uid gid size blksize blocks atime mtime ctime).all? do |name|
+    assert_include stat.inspect, name
+  end
 end
 
 assert 'File::Stat#ftype' do

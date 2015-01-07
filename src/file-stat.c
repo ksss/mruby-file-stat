@@ -7,6 +7,7 @@
 #include "mruby/data.h"
 #include "mruby/error.h"
 #include "mruby/class.h"
+#include "mruby/ext/io.h" // see https://github.com/iij/mruby-io/blob/master/include/mruby/ext/io.h
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -25,6 +26,26 @@ static struct stat *
 mrb_stat_alloc(mrb_state *mrb)
 {
   return (struct stat *)mrb_malloc(mrb, sizeof(struct stat));
+}
+
+static mrb_value
+io_stat(mrb_state *mrb, mrb_value self)
+{
+  struct RClass *file_class;
+  struct RClass *stat_class;
+  struct stat st, *ptr;
+  mrb_value fileno = mrb_io_fileno(mrb, self);
+
+  if (fstat(mrb_fixnum(fileno), &st) == -1  ) {
+    mrb_sys_fail(mrb, "fstat");
+  }
+
+  file_class = mrb_class_get(mrb, "File");
+  stat_class = mrb_class_get_under(mrb, file_class, "Stat");
+  ptr = mrb_stat_alloc(mrb);
+  *ptr = st;
+
+  return mrb_obj_value(Data_Wrap_Struct(mrb, stat_class, &mrb_stat_type, ptr));
 }
 
 static mrb_value
@@ -348,6 +369,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
 
   MRB_SET_INSTANCE_TT(stat, MRB_TT_DATA);
 
+  mrb_define_method(mrb, io, "stat", io_stat, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, file, "lstat", file_s_lstat, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, stat, "initialize", stat_initialize, MRB_ARGS_REQ(1));

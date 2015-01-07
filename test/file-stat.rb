@@ -11,6 +11,10 @@ assert 'File.lstat' do
   assert_kind_of File::Stat, File.lstat('README.md')
 end
 
+assert 'IO#stat' do
+  assert_kind_of File::Stat, IO.new(1).stat
+end
+
 assert 'File::Stat#initialize_copy' do
   orig = File::Stat.new('README.md')
   copy = orig.dup

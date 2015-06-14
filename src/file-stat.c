@@ -122,6 +122,33 @@ mrb_ll2num(mrb_state *mrb, long long t)
 }
 
 static mrb_value
+io_stat(mrb_state *mrb, mrb_value self)
+{
+  struct RClass *file_class;
+  struct RClass *stat_class;
+  struct stat st, *ptr;
+  mrb_value fileno;
+
+  if (mrb_respond_to(mrb, self, mrb_intern_lit(mrb, "fileno"))) {
+    fileno = mrb_funcall(mrb, self, "fileno", 0);
+  }
+  else {
+    mrb_raise(mrb, E_NOTIMP_ERROR, "`fileno' is not implemented");
+  }
+
+  if (fstat(mrb_fixnum(fileno), &st) == -1) {
+    mrb_sys_fail(mrb, "fstat");
+  }
+
+  file_class = mrb_class_get(mrb, "File");
+  stat_class = mrb_class_get_under(mrb, file_class, "Stat");
+  ptr = mrb_stat_alloc(mrb);
+  *ptr = st;
+
+  return mrb_obj_value(Data_Wrap_Struct(mrb, stat_class, &mrb_stat_type, ptr));
+}
+
+static mrb_value
 stat_dev(mrb_state *mrb, mrb_value self)
 {
   return mrb_fixnum_value(get_stat(mrb, self)->st_dev);
@@ -347,6 +374,8 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   struct RClass *process = mrb_define_module(mrb, "Process");
 
   MRB_SET_INSTANCE_TT(stat, MRB_TT_DATA);
+
+  mrb_define_method(mrb, io, "stat", io_stat, MRB_ARGS_NONE());
 
   mrb_define_class_method(mrb, file, "lstat", file_s_lstat, MRB_ARGS_REQ(1));
 

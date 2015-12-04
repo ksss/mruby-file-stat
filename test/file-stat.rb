@@ -32,12 +32,20 @@ end
 
 assert 'File::Stat#dev_major' do
   stat = File::Stat.new('README.md')
-  assert_equal Fixnum, stat.dev_major.class
+  if stat.dev_major
+    assert_equal Fixnum, stat.dev_major.class
+  else
+    assert_nil stat.dev_major  ## not supported
+  end
 end
 
 assert 'File::Stat#dev_minor' do
   stat = File::Stat.new('README.md')
-  assert_equal Fixnum, stat.dev_minor.class
+  if stat.dev_minor
+    assert_equal Fixnum, stat.dev_minor.class
+  else
+    assert_nil stat.dev_minor  ## not supported
+  end
 end
 
 assert 'File::Stat#ino' do
@@ -72,17 +80,29 @@ end
 
 assert 'File::Stat#rdev_major' do
   stat = File::Stat.new('README.md')
-  assert_equal Fixnum, stat.rdev_major.class
+  if stat.rdev_major
+    assert_equal Fixnum, stat.rdev_major.class
+  else
+    assert_nil stat.rdev_major  ## not supported
+  end
 end
 
 assert 'File::Stat#rdev_minor' do
   stat = File::Stat.new('README.md')
-  assert_equal Fixnum, stat.rdev_minor.class
+  if stat.rdev_minor
+    assert_equal Fixnum, stat.rdev_minor.class
+  else
+    assert_nil stat.rdev_minor  ## not supported
+  end
 end
 
 assert 'File::Stat#blocks' do
   stat = File::Stat.new('README.md')
-  assert_kind_of Fixnum, stat.blocks
+  if stat.blocks
+    assert_kind_of Fixnum, stat.blocks
+  else
+    assert_nil stat.blocks  ## Windows
+  end
 end
 
 assert 'File::Stat#atime' do
@@ -116,7 +136,11 @@ end
 
 assert 'File::Stat#blksize' do
   stat = File::Stat.new('README.md')
-  assert_true 0 < stat.blksize
+  if stat.blksize
+    assert_true 0 < stat.blksize
+  else
+    assert_nil stat.blksize  ## Windows
+  end
 end
 
 assert 'File::Stat#inspect' do
@@ -176,16 +200,14 @@ assert 'File::Stat#executable?' do
   stat = File::Stat.new('README.md')
   assert_false stat.executable?
 
-  stat = File::Stat.new('minirake')
+  mrbtest_path = "build/host/bin/mrbtest"
+  stat = File::Stat.new(mrbtest_path) rescue File::Stat.new(mrbtest_path+".exe")
   assert_true stat.executable?
 end
 
 assert 'File::Stat#writable_real?' do
   stat = File::Stat.new('README.md')
-  assert_false stat.executable_real?
-
-  stat = File::Stat.new('minirake')
-  assert_true stat.executable_real?
+  assert_true stat.writable_real?
 end
 
 assert 'File::Stat#file?' do
@@ -217,8 +239,13 @@ assert 'File::Stat#owned_real?' do
 end
 
 assert 'File::Stat#grpowned?' do
-  stat = File::Stat.new('README.md')
-  assert_true stat.grpowned?
+  is_unix = File::Stat.new('/dev/tty') rescue false
+  if is_unix
+    stat = File::Stat.new('README.md')
+    assert_true stat.grpowned?
+  else
+    skip "is not supported"
+  end
 end
 
 assert 'File::Stat#pipe?' do
@@ -245,8 +272,12 @@ assert 'File::Stat#chardev?' do
   stat = File::Stat.new('README.md')
   assert_false stat.chardev?
 
-  stat = File::Stat.new('/dev/tty')
-  assert_true stat.chardev?
+  begin
+    stat = File::Stat.new('/dev/tty')
+    assert_true stat.chardev?
+  rescue RuntimeError
+    skip '/dev/tty is not found'
+  end
 end
 
 assert 'File::Stat#setuid?' do

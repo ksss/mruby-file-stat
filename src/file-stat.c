@@ -8,9 +8,14 @@
 #include "mruby/error.h"
 #include "mruby/class.h"
 
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#endif
+
 
 #define STAT(p,s) stat(p,s)
 #define GETGROUPS_T gid_t
@@ -34,10 +39,15 @@ file_s_lstat(mrb_state *mrb, mrb_value klass)
   struct RClass *stat_class;
   struct stat st, *ptr;
   mrb_value fname;
-
+  int stat_ret;
   mrb_get_args(mrb, "S", &fname);
 
-  if (lstat(RSTRING_PTR(fname), &st) == -1) {
+#if defined(_WIN32) || defined(_WIN64)
+  stat_ret = stat(RSTRING_PTR(fname), &st);
+#else
+  stat_ret = lstat(RSTRING_PTR(fname), &st);
+#endif
+  if (stat_ret == -1) {
     mrb_sys_fail(mrb, RSTRING_PTR(fname));
   }
 
@@ -275,21 +285,27 @@ stat_size(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_blksize(mrb_state *mrb, mrb_value self)
 {
+#if defined(_WIN32) || defined(_WIN64)
+  return mrb_nil_value();
+#else
   return mrb_fixnum_value(get_stat(mrb, self)->st_blksize);
+#endif
 }
 
 static mrb_value
 stat_blocks(mrb_state *mrb, mrb_value self)
 {
+#if defined(_WIN32) || defined(_WIN64)
+  return mrb_nil_value();
+#else
   return mrb_ll2num(mrb, get_stat(mrb, self)->st_blocks);
+#endif
 }
 
+#if !defined(_WIN32) && !defined(_WIN64)
 static int
 mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
 {
-#ifdef _WIN32
-  return FALSE;
-#else
   int rv = FALSE;
   int groups = 16;
   GETGROUPS_T *gary = NULL;
@@ -328,8 +344,8 @@ mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
     mrb_free(mrb, gary);
   }
   return rv;
-#endif
 }
+#endif
 
 static mrb_value
 stat_grpowned_p(mrb_state *mrb, mrb_value self)
@@ -343,25 +359,41 @@ stat_grpowned_p(mrb_state *mrb, mrb_value self)
 static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
+#if defined(_WIN32) || defined(_WIN64)
+  return mrb_fixnum_value(0);
+#else
   return mrb_fixnum_value((mrb_int)getuid());
+#endif
 }
 
 static mrb_value
 process_getgid(mrb_state *mrb, mrb_value mod)
 {
+#if defined(_WIN32) || defined(_WIN64)
+  return mrb_fixnum_value(0);
+#else
   return mrb_fixnum_value((mrb_int)getgid());
+#endif
 }
 
 static mrb_value
 process_geteuid(mrb_state *mrb, mrb_value mod)
 {
+#if defined(_WIN32) || defined(_WIN64)
+  return mrb_fixnum_value(0);
+#else
   return mrb_fixnum_value((mrb_int)geteuid());
+#endif
 }
 
 static mrb_value
 process_getegid(mrb_state *mrb, mrb_value mod)
 {
+#if defined(_WIN32) || defined(_WIN64)
+  return mrb_fixnum_value(0);
+#else
   return mrb_fixnum_value((mrb_int)getegid());
+#endif
 }
 
 void

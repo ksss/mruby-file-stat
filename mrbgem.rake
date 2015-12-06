@@ -8,9 +8,7 @@ MRuby::Gem::Specification.new('mruby-file-stat') do |spec|
 
   extconf = "#{File.dirname(__FILE__)}/src/extconf.h"
   unless File.exist? extconf
-    if RUBY_PLATFORM !~ /mingw|mswin/
-      have_struct_member "struct stat", "st_birthtimespec", "sys/stat.h"
-    end
+    have_struct_member "struct stat", "st_birthtimespec", "sys/stat.h"
     create_header extconf
   end
   CLOBBER << extconf

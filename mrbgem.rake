@@ -1,18 +1,25 @@
 require 'mkmf'
 require 'rake/clean'
 
+file_stat_dir = File.dirname(__FILE__)
+extconf = "#{file_stat_dir}/src/extconf.h"
+
+file extconf => ["#{file_stat_dir}/src/file-stat.c"] do |t|
+  File.unlink(t.name) if File.exist?(t.name)
+
+  have_struct_member "struct stat", "st_birthtimespec", "sys/stat.h"
+  have_struct_member "struct stat", "st_blksize", "sys/stat.h"
+
+  have_func "lstat", "sys/stat.h"
+  create_header t.name
+end
+
+CLOBBER << extconf
+
 MRuby::Gem::Specification.new('mruby-file-stat') do |spec|
   spec.license = 'MIT'
   spec.author  = 'ksss <co000ri@gmail.com>'
   spec.add_dependency('mruby-time')
 
-  extconf = "#{File.dirname(__FILE__)}/src/extconf.h"
-  unless File.exist? extconf
-    have_struct_member "struct stat", "st_birthtimespec", "sys/stat.h"
-    have_struct_member "struct stat", "st_blksize", "sys/stat.h"
-
-    have_func "lstat", "sys/stat.h"
-    create_header extconf
-  end
-  CLOBBER << extconf
+  Rake::Task[extconf].invoke
 end

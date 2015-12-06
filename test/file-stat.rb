@@ -136,10 +136,11 @@ end
 
 assert 'File::Stat#blksize' do
   stat = File::Stat.new('README.md')
-  if stat.blksize
-    assert_true 0 < stat.blksize
+  blksize = stat.blksize
+  if blksize.nil?
+    true # not implemented stat->st_blksize
   else
-    assert_nil stat.blksize  ## Windows
+    assert_kind_of Integer, stat.blksize
   end
 end
 

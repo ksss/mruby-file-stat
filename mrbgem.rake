@@ -1,6 +1,16 @@
 require 'mkmf'
 require 'rake/clean'
 
+# patch for old mkmf bug
+if RUBY_VERSION <= "1.9.3"
+  def try_link(src, opt="", *opts, &b)
+    try_link0(src, opt, *opts, &b)
+  ensure
+    rm_f ["conftest*", "c0x32*"]
+  end
+end
+# patch end
+
 file_stat_dir = File.dirname(__FILE__)
 extconf = "#{file_stat_dir}/src/extconf.h"
 

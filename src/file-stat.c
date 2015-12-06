@@ -293,10 +293,10 @@ stat_blksize(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_blocks(mrb_state *mrb, mrb_value self)
 {
-#if defined(_WIN32) || defined(_WIN64)
-  return mrb_nil_value();
-#else
+#ifdef HAVE_STRUCT_STAT_ST_BLOCKS
   return mrb_ll2num(mrb, get_stat(mrb, self)->st_blocks);
+#else
+  return mrb_nil_value();
 #endif
 }
 

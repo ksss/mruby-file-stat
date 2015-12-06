@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/ksss/mruby-file-stat.svg?branch=master)](https://travis-ci.org/ksss/mruby-file-stat)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/04am84uda2cj49n3/branch/master?svg=true)](https://ci.appveyor.com/project/ksss/mruby-file-stat/branch/master)
+
 **File::Stat** class in mruby
 
 ```ruby

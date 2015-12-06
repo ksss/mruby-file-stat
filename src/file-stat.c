@@ -16,13 +16,17 @@
 #include <unistd.h>
 #endif
 
-
-#define STAT(p,s) stat(p,s)
-#define GETGROUPS_T gid_t
-#define MRB_MAX_GROUPS (65536)
-
 #include "constants.h"
 #include "extconf.h"
+
+#define STAT(p,s) stat(p,s)
+#ifdef HAVE_LSTAT
+#  define LSTAT(p,s) lstat(p,s)
+#else
+#  define LSTAT(p,s) stat(p,s)
+#endif
+#define GETGROUPS_T gid_t
+#define MRB_MAX_GROUPS (65536)
 
 struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_free };
 
@@ -39,15 +43,9 @@ file_s_lstat(mrb_state *mrb, mrb_value klass)
   struct RClass *stat_class;
   struct stat st, *ptr;
   mrb_value fname;
-  int stat_ret;
   mrb_get_args(mrb, "S", &fname);
 
-#if defined(_WIN32) || defined(_WIN64)
-  stat_ret = stat(RSTRING_PTR(fname), &st);
-#else
-  stat_ret = lstat(RSTRING_PTR(fname), &st);
-#endif
-  if (stat_ret == -1) {
+  if (LSTAT(RSTRING_PTR(fname), &st) == -1) {
     mrb_sys_fail(mrb, RSTRING_PTR(fname));
   }
 

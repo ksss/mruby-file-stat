@@ -98,11 +98,10 @@ end
 
 assert 'File::Stat#blocks' do
   stat = File::Stat.new('README.md')
-  if stat.blocks
-    assert_kind_of Fixnum, stat.blocks
-  else
-    assert_nil stat.blocks  ## Windows
-  end
+  blocks = stat.blocks
+  skip "This system not support `struct stat.st_blocks`" if blocks.nil?
+
+  assert_kind_of Integer, blocks
 end
 
 assert 'File::Stat#atime' do
@@ -137,11 +136,9 @@ end
 assert 'File::Stat#blksize' do
   stat = File::Stat.new('README.md')
   blksize = stat.blksize
-  if blksize.nil?
-    true # not implemented stat->st_blksize
-  else
-    assert_kind_of Integer, stat.blksize
-  end
+  skip "This system not support `struct stat.st_blksize`" if blksize.nil?
+
+  assert_kind_of Integer, blksize
 end
 
 assert 'File::Stat#inspect' do

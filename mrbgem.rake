@@ -17,11 +17,17 @@ extconf = "#{file_stat_dir}/src/extconf.h"
 file extconf => ["#{file_stat_dir}/src/file-stat.c"] do |t|
   File.unlink(t.name) if File.exist?(t.name)
 
-  have_struct_member "struct stat", "st_birthtimespec", "sys/stat.h"
-  have_struct_member "struct stat", "st_blksize", "sys/stat.h"
-  have_struct_member "struct stat", "st_blocks", "sys/stat.h"
+  # TODO
+  # if open this block
+  # raise error: redefinition of 'struct timespec'
+  # in windows
+  if RUBY_PLATFORM !~ /mingw|mswin/
+    have_struct_member "struct stat", "st_birthtimespec", "sys/stat.h"
+    have_struct_member "struct stat", "st_blksize", "sys/stat.h"
+    have_struct_member "struct stat", "st_blocks", "sys/stat.h"
 
-  have_func "lstat", "sys/stat.h"
+    have_func "lstat", "sys/stat.h"
+  end
   create_header t.name
 end
 

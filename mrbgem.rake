@@ -27,7 +27,9 @@ file extconf => ["#{file_stat_dir}/src/file-stat.c"] do |t|
     have_struct_member "struct stat", "st_blocks", "sys/stat.h"
 
     have_func "lstat", "sys/stat.h"
+    have_func "getgroups", "unistd.h"
   end
+
   create_header t.name
 end
 

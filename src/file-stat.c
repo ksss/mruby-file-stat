@@ -300,10 +300,12 @@ stat_blocks(mrb_state *mrb, mrb_value self)
 #endif
 }
 
-#if !defined(_WIN32) && !defined(_WIN64)
 static int
 mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
 {
+#if defined(_WIN32) || !defined(HAVE_GETGROUPS)
+  return FALSE;
+#else
   int rv = FALSE;
   int groups = 16;
   GETGROUPS_T *gary = NULL;
@@ -342,8 +344,8 @@ mrb_group_member(mrb_state *mrb, GETGROUPS_T gid)
     mrb_free(mrb, gary);
   }
   return rv;
-}
 #endif
+}
 
 static mrb_value
 stat_grpowned_p(mrb_state *mrb, mrb_value self)

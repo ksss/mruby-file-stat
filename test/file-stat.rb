@@ -170,8 +170,10 @@ assert 'File::Stat#readable?' do
 end
 
 assert 'File::Stat#readable_real?' do
-  stat = File::Stat.new('README.md')
-  assert_true stat.readable_real?
+  dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
+  assert_true File::Stat.new("#{dir}/test/readable").readable_real?
+  assert_true File::Stat.new("#{dir}/test/writable").readable_real?
+  assert_true File::Stat.new("#{dir}/test/executable").readable_real?
 end
 
 assert 'File::Stat#world_readable?' do

@@ -170,6 +170,8 @@ assert 'File::Stat#readable?' do
 end
 
 assert 'File::Stat#readable_real?' do
+  skip "when windows" if FileStatTest.win?
+
   dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
   FileStatTest.system("chmod +r-w-x #{dir}/test/readable")
   FileStatTest.system("chmod -r+w-x #{dir}/test/writable")
@@ -190,6 +192,8 @@ assert 'File::Stat#writable?' do
 end
 
 assert 'File::Stat#writable_real?' do
+  skip "when windows" if FileStatTest.win?
+
   dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
   FileStatTest.system("chmod +r-w-x #{dir}/test/readable")
   FileStatTest.system("chmod -r+w-x #{dir}/test/writable")

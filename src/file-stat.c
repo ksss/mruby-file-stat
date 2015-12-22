@@ -375,7 +375,7 @@ stat_readable_real_p(mrb_state *mrb, mrb_value self)
 #endif
   st = get_stat(mrb, self);
 #ifdef S_IRUSR
-  if (mrb_bool(mrb_funcall(mrb, self, "owned?", 0)))
+  if (st->st_uid == getuid())
     return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
 #endif
 #ifdef S_IRGRP

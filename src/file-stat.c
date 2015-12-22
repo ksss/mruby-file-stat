@@ -410,12 +410,12 @@ stat_writable_real_p(mrb_state *mrb, mrb_value self)
   if (st->st_uid == getuid())
     return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
 #endif
-#ifdef S_IRGRP
+#ifdef S_IWGRP
   if (mrb_group_member(mrb, st->st_gid))
-    return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
+    return st->st_mode & S_IWGRP ? mrb_true_value() : mrb_false_value();
 #endif
-#ifdef S_IROTH
-  if (!(st->st_mode & S_IROTH)) return mrb_false_value();
+#ifdef S_IWOTH
+  if (!(st->st_mode & S_IWOTH)) return mrb_false_value();
 #endif
   return mrb_true_value();
 }

@@ -25,7 +25,7 @@
 #else
 #  define LSTAT(p,s) stat(p,s)
 #endif
-#define GETGROUPS_T gid_t
+#define GETGROUPS_T unsigned int
 #define MRB_MAX_GROUPS (65536)
 
 struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_free };

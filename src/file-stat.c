@@ -389,6 +389,30 @@ stat_readable_real_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_writable_real_p(mrb_state *mrb, mrb_value self)
+{
+  struct stat *st;
+
+#ifdef USE_GETEUID
+  if (getuid() == 0)
+    return mrb_true_value();
+#endif
+  st = get_stat(mrb, self);
+#ifdef S_IWUSR
+  if (st->st_uid == getuid())
+    return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
+#endif
+#ifdef S_IRGRP
+  if (mrb_group_member(mrb, st->st_gid))
+    return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
+#endif
+#ifdef S_IROTH
+  if (!(st->st_mode & S_IROTH)) return mrb_false_value();
+#endif
+  return mrb_true_value();
+}
+
+static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
 #if defined(_WIN32) || defined(_WIN64)
@@ -467,6 +491,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "readable_real?", stat_readable_real_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "writable_real?", stat_writable_real_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));
   mrb_define_const(mrb, constants, "IFSOCK", mrb_fixnum_value(S_IFSOCK));

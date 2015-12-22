@@ -110,18 +110,6 @@ class File
       end
     end
 
-    def writable_real?
-      if Process.uid == 0
-        true
-      elsif owned_real?
-        (mode & IWUSR) == IWUSR
-      elsif grpowned?
-        (mode & IWGRP) == IWGRP
-      else
-        (mode & IWOTH) == IWOTH
-      end
-    end
-
     def executable?
       if Process.euid == 0
         (mode & IXUGO) == IXUGO

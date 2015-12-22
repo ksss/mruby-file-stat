@@ -122,18 +122,6 @@ class File
       end
     end
 
-    def executable_real?
-      if Process.uid == 0
-        (mode & IXUGO) == IXUGO
-      elsif owned_real?
-        (mode & IXUSR) == IXUSR
-      elsif grpowned?
-        (mode & IXGRP) == IXGRP
-      else
-        (mode & IXOTH) == IXOTH
-      end
-    end
-
     def world_readable?
       m = mode
       if (m & IROTH) == IROTH

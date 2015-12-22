@@ -217,11 +217,6 @@ assert 'File::Stat#executable?' do
   assert_true stat.executable?
 end
 
-assert 'File::Stat#writable_real?' do
-  stat = File::Stat.new('README.md')
-  assert_true stat.writable_real?
-end
-
 assert 'File::Stat#file?' do
   stat = File::Stat.new('README.md')
   assert_true stat.file?

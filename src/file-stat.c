@@ -28,6 +28,14 @@
 #define GETGROUPS_T unsigned int
 #define MRB_MAX_GROUPS (65536)
 
+#if defined(_WIN32) || defined(_WIN64)
+unsigned int
+getuid(void)
+{
+  return 0;
+}
+#endif
+
 #if defined(S_IXGRP) && !defined(_WIN32) && !defined(__CYGWIN__)
 #  define USE_GETEUID 1
 #endif

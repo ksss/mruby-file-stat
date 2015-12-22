@@ -171,9 +171,12 @@ end
 
 assert 'File::Stat#readable_real?' do
   dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
+  FileStatTest.system("chmod +r-w-x #{dir}/test/readable")
+  FileStatTest.system("chmod -r+w-x #{dir}/test/writable")
+  FileStatTest.system("chmod -r-w+x #{dir}/test/executable")
   assert_true File::Stat.new("#{dir}/test/readable").readable_real?
-  assert_true File::Stat.new("#{dir}/test/writable").readable_real?
-  assert_true File::Stat.new("#{dir}/test/executable").readable_real?
+  assert_false File::Stat.new("#{dir}/test/writable").readable_real?
+  assert_false File::Stat.new("#{dir}/test/executable").readable_real?
 end
 
 assert 'File::Stat#world_readable?' do
@@ -187,8 +190,13 @@ assert 'File::Stat#writable?' do
 end
 
 assert 'File::Stat#writable_real?' do
-  stat = File::Stat.new('README.md')
-  assert_true stat.writable_real?
+  dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
+  FileStatTest.system("chmod +r-w-x #{dir}/test/readable")
+  FileStatTest.system("chmod -r+w-x #{dir}/test/writable")
+  FileStatTest.system("chmod -r-w+x #{dir}/test/executable")
+  assert_false File::Stat.new("#{dir}/test/readable").writable_real?
+  assert_true File::Stat.new("#{dir}/test/writable").writable_real?
+  assert_false File::Stat.new("#{dir}/test/executable").writable_real?
 end
 
 assert 'File::Stat#world_writable?' do

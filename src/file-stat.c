@@ -28,6 +28,14 @@
 #define GETGROUPS_T unsigned int
 #define MRB_MAX_GROUPS (65536)
 
+#if defined(S_IXGRP) && !defined(_WIN32) && !defined(__CYGWIN__)
+#  define USE_GETEUID 1
+#endif
+
+#ifdef __native_client__
+#  undef USE_GETEUID
+#endif
+
 struct mrb_data_type mrb_stat_type = { "File::Stat", mrb_free };
 
 static struct stat *
@@ -357,6 +365,30 @@ stat_grpowned_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_readable_real_p(mrb_state *mrb, mrb_value self)
+{
+  struct stat *st;
+
+#ifdef USE_GETEUID
+  if (getuid() == 0)
+    return mrb_true_value();
+#endif
+  st = get_stat(mrb, self);
+#ifdef S_IRUSR
+  if (mrb_bool(mrb_funcall(mrb, self, "owned?", 0)))
+    return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
+#endif
+#ifdef S_IRGRP
+  if (mrb_group_member(mrb, st->st_gid))
+    return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
+#endif
+#ifdef S_IROTH
+  if (!(st->st_mode & S_IROTH)) return mrb_false_value();
+#endif
+  return mrb_true_value();
+}
+
+static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
 #if defined(_WIN32) || defined(_WIN64)
@@ -434,6 +466,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "blksize", stat_blksize, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "readable_real?", stat_readable_real_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));
   mrb_define_const(mrb, constants, "IFSOCK", mrb_fixnum_value(S_IFSOCK));

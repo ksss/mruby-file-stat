@@ -98,18 +98,6 @@ class File
       end
     end
 
-    def readable_real?
-      if Process.uid == 0
-        true
-      elsif owned_real?
-        (mode & IRUSR) == IRUSR
-      elsif grpowned?
-        (mode & IRGRP) == IRGRP
-      else
-        (mode & IROTH) == IROTH
-      end
-    end
-
     def writable?
       if Process.euid == 0
         true

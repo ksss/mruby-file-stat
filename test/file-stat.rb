@@ -219,6 +219,8 @@ assert 'File::Stat#writable_real?' do
 end
 
 assert 'File::Stat#world_writable?' do
+  skip "when windows" if FileStatTest.win?
+
   dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
   FileStatTest.system("chmod 0600 #{dir}/test/writable")
   assert_equal nil, File::Stat.new("#{dir}/test/writable").world_writable?

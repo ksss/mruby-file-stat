@@ -86,18 +86,6 @@ class File
       uid == Process.uid
     end
 
-    def writable?
-      if Process.euid == 0
-        true
-      elsif owned?
-        (mode & IWUSR) == IWUSR
-      elsif grpowned?
-        (mode & IWGRP) == IWGRP
-      else
-        (mode & IWOTH) == IWOTH
-      end
-    end
-
     def executable?
       if Process.euid == 0
         (mode & IXUGO) == IXUGO

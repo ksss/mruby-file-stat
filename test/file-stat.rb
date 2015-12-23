@@ -194,8 +194,15 @@ assert 'File::Stat#world_readable?' do
 end
 
 assert 'File::Stat#writable?' do
-  stat = File::Stat.new('README.md')
-  assert_true stat.writable?
+  skip "when windows" if FileStatTest.win?
+
+  dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
+  FileStatTest.system("chmod +r-w-x #{dir}/test/readable")
+  FileStatTest.system("chmod -r+w-x #{dir}/test/writable")
+  FileStatTest.system("chmod -r-w+x #{dir}/test/executable")
+  assert_false File::Stat.new("#{dir}/test/readable").writable_real?
+  assert_true File::Stat.new("#{dir}/test/writable").writable_real?
+  assert_false File::Stat.new("#{dir}/test/executable").writable_real?
 end
 
 assert 'File::Stat#writable_real?' do

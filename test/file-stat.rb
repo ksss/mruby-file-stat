@@ -200,9 +200,9 @@ assert 'File::Stat#writable?' do
   FileStatTest.system("chmod +r-w-x #{dir}/test/readable")
   FileStatTest.system("chmod -r+w-x #{dir}/test/writable")
   FileStatTest.system("chmod -r-w+x #{dir}/test/executable")
-  assert_false File::Stat.new("#{dir}/test/readable").writable_real?
-  assert_true File::Stat.new("#{dir}/test/writable").writable_real?
-  assert_false File::Stat.new("#{dir}/test/executable").writable_real?
+  assert_false File::Stat.new("#{dir}/test/readable").writable?
+  assert_true File::Stat.new("#{dir}/test/writable").writable?
+  assert_false File::Stat.new("#{dir}/test/executable").writable?
 end
 
 assert 'File::Stat#writable_real?' do

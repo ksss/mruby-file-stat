@@ -36,21 +36,22 @@
 #else
 #  define LSTAT(p,s) stat(p,s)
 #endif
-#define GETGROUPS_T unsigned int
 #define MRB_MAX_GROUPS (65536)
 
 #if defined(_WIN32) || defined(_WIN64)
-unsigned int
+typedef unsigned int gid_t
+gid_t
 getuid(void)
 {
   return 0;
 }
-unsigned int
+gid_t
 geteuid(void)
 {
   return 0;
 }
 #endif
+#define GETGROUPS_T gid_t
 
 #if defined(S_IXGRP) && !defined(_WIN32) && !defined(__CYGWIN__)
 #  define USE_GETEUID 1

@@ -27,6 +27,18 @@
 #include <unistd.h>
 #endif
 
+#ifndef S_IRUGO
+#  define S_IRUGO (S_IRUSR | S_IRGRP | S_IROTH)
+#endif
+
+#ifndef S_IWUGO
+#  define S_IWUGO (S_IWUSR | S_IWGRP | S_IWOTH)
+#endif
+
+#ifndef S_IXUGO
+#  define S_IXUGO (S_IXUSR | S_IXGRP | S_IXOTH)
+#endif
+
 #include "constants.h"
 #include "extconf.h"
 
@@ -438,6 +450,23 @@ stat_readable_real_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_world_readable_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_IROTH
+  struct stat *st = get_stat(mrb, self);
+  if ((st->st_mode & (S_IROTH)) == S_IROTH) {
+    return mrb_fixnum_value(st->st_mode & (S_IRUGO|S_IWUGO|S_IXUGO));
+  }
+  else {
+    return mrb_nil_value();
+  }
+#else
+  return mrb_nil_value();
+#endif
+}
+
+
+static mrb_value
 stat_writable_p(mrb_state *mrb, mrb_value self)
 {
   struct stat *st;
@@ -485,10 +514,6 @@ stat_writable_real_p(mrb_state *mrb, mrb_value self)
 #endif
   return mrb_true_value();
 }
-
-#ifndef S_IXUGO
-#  define S_IXUGO (S_IXUSR | S_IXGRP | S_IXOTH)
-#endif
 
 static mrb_value
 stat_executable_p(mrb_state *mrb, mrb_value self)
@@ -618,6 +643,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "grpowned?", stat_grpowned_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "readable?", stat_readable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "readable_real?", stat_readable_real_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "world_readable?", stat_world_readable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable?", stat_writable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable_real?", stat_writable_real_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable?", stat_executable_p, MRB_ARGS_NONE());

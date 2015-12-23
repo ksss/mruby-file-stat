@@ -189,8 +189,13 @@ assert 'File::Stat#readable_real?' do
 end
 
 assert 'File::Stat#world_readable?' do
-  stat = File::Stat.new('README.md')
-  assert_include [Fixnum, NilClass], stat.world_readable?.class
+  skip "when windows" if FileStatTest.win?
+
+  dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
+  FileStatTest.system("chmod 0400 #{dir}/test/readable")
+  assert_equal nil, File::Stat.new("#{dir}/test/readable").world_readable?
+  FileStatTest.system("chmod 0444 #{dir}/test/readable")
+  assert_equal 0444, File::Stat.new("#{dir}/test/readable").world_readable?
 end
 
 assert 'File::Stat#writable?' do

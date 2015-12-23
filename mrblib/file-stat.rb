@@ -86,15 +86,6 @@ class File
       uid == Process.uid
     end
 
-    def world_readable?
-      m = mode
-      if (m & IROTH) == IROTH
-        m & (IRUGO|IWUGO|IXUGO)
-      else
-        nil
-      end
-    end
-
     def world_writable?
       m = mode
       if (m & IWOTH) == IWOTH

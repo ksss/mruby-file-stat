@@ -219,8 +219,11 @@ assert 'File::Stat#writable_real?' do
 end
 
 assert 'File::Stat#world_writable?' do
-  stat = File::Stat.new('README.md')
-  assert_include [Fixnum, NilClass], stat.world_writable?.class
+  dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
+  FileStatTest.system("chmod 0600 #{dir}/test/writable")
+  assert_equal nil, File::Stat.new("#{dir}/test/writable").world_writable?
+  FileStatTest.system("chmod 0666 #{dir}/test/writable")
+  assert_equal 0666, File::Stat.new("#{dir}/test/writable").world_writable?
 end
 
 assert 'File::Stat#executable?' do

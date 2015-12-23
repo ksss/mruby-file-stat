@@ -516,6 +516,22 @@ stat_writable_real_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_world_writable_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_IROTH
+  struct stat *st = get_stat(mrb, self);
+  if ((st->st_mode & (S_IROTH)) == S_IROTH) {
+    return mrb_fixnum_value(st->st_mode & (S_IRUGO|S_IWUGO|S_IXUGO));
+  }
+  else {
+    return mrb_nil_value();
+  }
+#else
+  return mrb_nil_value();
+#endif
+}
+
+static mrb_value
 stat_executable_p(mrb_state *mrb, mrb_value self)
 {
   struct stat *st = get_stat(mrb, self);
@@ -646,6 +662,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "world_readable?", stat_world_readable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable?", stat_writable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable_real?", stat_writable_real_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "world_writable?", stat_world_writable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable?", stat_executable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable_real?", stat_executable_real_p, MRB_ARGS_NONE());
 

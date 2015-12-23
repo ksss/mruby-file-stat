@@ -403,7 +403,7 @@ stat_readable_p(mrb_state *mrb, mrb_value self)
     return st->st_mode & S_IRUSR ? mrb_true_value() : mrb_false_value();
 #endif
 #ifdef S_IRGRP
-  if (mrb_test(stat_grpowned_p(mrb, self)))
+  if (mrb_group_member(mrb, st->st_gid))
     return st->st_mode & S_IRGRP ? mrb_true_value() : mrb_false_value();
 #endif
 #ifdef S_IROTH
@@ -452,7 +452,7 @@ stat_writable_p(mrb_state *mrb, mrb_value self)
     return st->st_mode & S_IWUSR ? mrb_true_value() : mrb_false_value();
 #endif
 #ifdef S_IWGRP
-  if (mrb_test(stat_grpowned_p(mrb, self)))
+  if (mrb_group_member(mrb, st->st_gid))
     return st->st_mode & S_IWGRP ? mrb_true_value() : mrb_false_value();
 #endif
 #ifdef S_IWOTH

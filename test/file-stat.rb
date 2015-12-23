@@ -165,8 +165,15 @@ assert 'File::Stat#directory?' do
 end
 
 assert 'File::Stat#readable?' do
-  stat = File::Stat.new('README.md')
-  assert_true stat.readable?
+  skip "when windows" if FileStatTest.win?
+
+  dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
+  FileStatTest.system("chmod +r-w-x #{dir}/test/readable")
+  FileStatTest.system("chmod -r+w-x #{dir}/test/writable")
+  FileStatTest.system("chmod -r-w+x #{dir}/test/executable")
+  assert_true File::Stat.new("#{dir}/test/readable").readable?
+  assert_false File::Stat.new("#{dir}/test/writable").readable?
+  assert_false File::Stat.new("#{dir}/test/executable").readable?
 end
 
 assert 'File::Stat#readable_real?' do

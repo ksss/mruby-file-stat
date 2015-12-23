@@ -86,18 +86,6 @@ class File
       uid == Process.uid
     end
 
-    def readable?
-      if Process.euid == 0
-        true
-      elsif owned?
-        (mode & IRUSR) == IRUSR
-      elsif grpowned?
-        (mode & IRGRP) == IRGRP
-      else
-        (mode & IROTH) == IROTH
-      end
-    end
-
     def writable?
       if Process.euid == 0
         true

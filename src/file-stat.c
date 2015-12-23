@@ -45,6 +45,11 @@ getuid(void)
 {
   return 0;
 }
+unsigned int
+geteuid(void)
+{
+  return 0;
+}
 #endif
 
 #if defined(S_IXGRP) && !defined(_WIN32) && !defined(__CYGWIN__)

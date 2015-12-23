@@ -219,12 +219,13 @@ assert 'File::Stat#world_writable?' do
 end
 
 assert 'File::Stat#executable?' do
-  stat = File::Stat.new('README.md')
-  assert_false stat.executable?
-
-  mrbtest_path = "build/host/bin/mrbtest"
-  stat = File::Stat.new(mrbtest_path) rescue File::Stat.new(mrbtest_path+".exe")
-  assert_true stat.executable?
+  dir = __FILE__[0..-18] # 18 = /test/file-stat.rb
+  FileStatTest.system("chmod +r-w-x #{dir}/test/readable")
+  FileStatTest.system("chmod -r+w-x #{dir}/test/writable")
+  FileStatTest.system("chmod -r-w+x #{dir}/test/executable")
+  assert_false File::Stat.new("#{dir}/test/readable").executable?
+  assert_false File::Stat.new("#{dir}/test/writable").executable?
+  assert_true File::Stat.new("#{dir}/test/executable").executable?
 end
 
 assert 'File::Stat#executable_real?' do

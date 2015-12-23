@@ -86,18 +86,6 @@ class File
       uid == Process.uid
     end
 
-    def executable?
-      if Process.euid == 0
-        (mode & IXUGO) == IXUGO
-      elsif owned?
-        (mode & IXUSR) == IXUSR
-      elsif grpowned?
-        (mode & IXGRP) == IXGRP
-      else
-        (mode & IXOTH) == IXOTH
-      end
-    end
-
     def world_readable?
       m = mode
       if (m & IROTH) == IROTH

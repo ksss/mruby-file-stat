@@ -491,6 +491,31 @@ stat_writable_real_p(mrb_state *mrb, mrb_value self)
 #endif
 
 static mrb_value
+stat_executable_p(mrb_state *mrb, mrb_value self)
+{
+  struct stat *st = get_stat(mrb, self);
+
+#ifdef USE_GETEUID
+  if (geteuid() == 0) {
+    return st->st_mode & S_IXUGO ? mrb_true_value() : mrb_false_value();
+}
+#endif
+#ifdef S_IXUSR
+  if (st->st_uid == geteuid())
+    return st->st_mode & S_IXUSR ? mrb_true_value() : mrb_false_value();
+#endif
+#ifdef S_IXGRP
+  if (mrb_group_member(mrb, st->st_gid))
+    return st->st_mode & S_IXGRP ? mrb_true_value() : mrb_false_value();
+#endif
+#ifdef S_IXOTH
+  if (!(st->st_mode & S_IXOTH))
+    return mrb_false_value();
+#endif
+  return mrb_true_value();
+}
+
+static mrb_value
 stat_executable_real_p(mrb_state *mrb, mrb_value self)
 {
   struct stat *st = get_stat(mrb, self);
@@ -595,6 +620,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "readable_real?", stat_readable_real_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable?", stat_writable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "writable_real?", stat_writable_real_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "executable?", stat_executable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable_real?", stat_executable_real_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));

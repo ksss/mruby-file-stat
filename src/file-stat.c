@@ -117,6 +117,16 @@ geteuid(void)
 {
   return 0;
 }
+gid_t
+getgid(void)
+{
+  return 0;
+}
+gid_t
+getegid(void)
+{
+  return 0;
+}
 #endif
 #define GETGROUPS_T gid_t
 

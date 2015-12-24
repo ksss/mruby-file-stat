@@ -1,7 +1,6 @@
 class File
   class Stat
     include Comparable
-    include File::Stat::Constants
 
     def <=>(other)
       if other.kind_of?(self.class)

@@ -10,6 +10,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 
@@ -728,6 +729,47 @@ stat_sticky_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_ftype(mrb_state *mrb, mrb_value self)
+{
+  struct stat *st = get_stat(mrb, self);
+  const char *t;
+
+  if (S_ISREG(st->st_mode)) {
+    t = "file";
+  }
+  else if (S_ISDIR(st->st_mode)) {
+    t = "directory";
+  }
+  else if (S_ISCHR(st->st_mode)) {
+    t = "characterSpecial";
+  }
+#ifdef S_ISBLK
+  else if (S_ISBLK(st->st_mode)) {
+    t = "blockSpecial";
+  }
+#endif
+#ifdef S_ISFIFO
+  else if (S_ISFIFO(st->st_mode)) {
+    t = "fifo";
+  }
+#endif
+#ifdef S_ISLNK
+  else if (S_ISLNK(st->st_mode)) {
+    t = "link";
+  }
+#endif
+#ifdef S_ISSOCK
+  else if (S_ISSOCK(st->st_mode)) {
+    t = "socket";
+  }
+#endif
+  else {
+    t = "unknown";
+  }
+  return mrb_str_new_static(mrb, t, (size_t)strlen(t));
+}
+
+static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
 #if defined(_WIN32) || defined(_WIN64)
@@ -825,6 +867,8 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "setuid?", stat_setuid_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "setgid?", stat_setgid_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "sticky?", stat_sticky_p, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, stat, "ftype", stat_ftype, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));
   mrb_define_const(mrb, constants, "IFSOCK", mrb_fixnum_value(S_IFSOCK));

@@ -57,26 +57,5 @@ class File
     def owned_real?
       uid == Process.uid
     end
-
-    def ftype
-      case mode & IFMT
-      when IFSOCK
-        "socket"
-      when IFLNK
-        "link"
-      when IFREG
-        "file"
-      when IFBLK
-        "blockSpecial"
-      when IFDIR
-        "directory"
-      when IFCHR
-        "characterSpecial"
-      when IFIFO
-        "fifo"
-      else
-        "unknown"
-      end
-    end
   end
 end

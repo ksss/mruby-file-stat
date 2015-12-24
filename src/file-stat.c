@@ -782,41 +782,25 @@ stat_ftype(mrb_state *mrb, mrb_value self)
 static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
-#if defined(_WIN32) || defined(_WIN64)
-  return mrb_fixnum_value(0);
-#else
   return mrb_fixnum_value((mrb_int)getuid());
-#endif
 }
 
 static mrb_value
 process_getgid(mrb_state *mrb, mrb_value mod)
 {
-#if defined(_WIN32) || defined(_WIN64)
-  return mrb_fixnum_value(0);
-#else
   return mrb_fixnum_value((mrb_int)getgid());
-#endif
 }
 
 static mrb_value
 process_geteuid(mrb_state *mrb, mrb_value mod)
 {
-#if defined(_WIN32) || defined(_WIN64)
-  return mrb_fixnum_value(0);
-#else
   return mrb_fixnum_value((mrb_int)geteuid());
-#endif
 }
 
 static mrb_value
 process_getegid(mrb_state *mrb, mrb_value mod)
 {
-#if defined(_WIN32) || defined(_WIN64)
-  return mrb_fixnum_value(0);
-#else
   return mrb_fixnum_value((mrb_int)getegid());
-#endif
 }
 
 void

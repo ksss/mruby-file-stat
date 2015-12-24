@@ -698,6 +698,36 @@ stat_socket_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_setuid_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_ISUID
+  if (get_stat(mrb, self)->st_mode & S_ISUID)
+    return mrb_true_value();
+#endif
+  return mrb_false_value();
+}
+
+static mrb_value
+stat_setgid_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_ISGID
+  if (get_stat(mrb, self)->st_mode & S_ISGID)
+    return mrb_true_value();
+#endif
+  return mrb_false_value();
+}
+
+static mrb_value
+stat_sticky_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_ISVTX
+  if (get_stat(mrb, self)->st_mode & S_ISVTX)
+    return mrb_true_value();
+#endif
+  return mrb_false_value();
+}
+
+static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
 #if defined(_WIN32) || defined(_WIN64)
@@ -791,6 +821,10 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "blockdev?", stat_blockdev_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "pipe?", stat_pipe_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "socket?", stat_socket_p, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, stat, "setuid?", stat_setuid_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "setgid?", stat_setgid_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "sticky?", stat_sticky_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));
   mrb_define_const(mrb, constants, "IFSOCK", mrb_fixnum_value(S_IFSOCK));

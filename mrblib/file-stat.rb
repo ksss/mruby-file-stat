@@ -58,18 +58,6 @@ class File
       uid == Process.uid
     end
 
-    def setuid?
-      (mode & ISUID) == ISUID
-    end
-
-    def setgid?
-      (mode & ISGID) == ISGID
-    end
-
-    def sticky?
-      (mode & ISVTX) == ISVTX
-    end
-
     def ftype
       case mode & IFMT
       when IFSOCK

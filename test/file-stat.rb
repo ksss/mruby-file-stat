@@ -327,7 +327,7 @@ assert 'File::Stat#setuid?' do
   assert_false stat.setuid?
 end
 
-assert 'File::Stat#setuid?' do
+assert 'File::Stat#setgid?' do
   stat = File::Stat.new('README.md')
   assert_false stat.setgid?
 end

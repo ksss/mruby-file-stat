@@ -39,6 +39,60 @@
 #  define S_IXUGO (S_IXUSR | S_IXGRP | S_IXOTH)
 #endif
 
+#ifndef S_ISLNK
+#  ifdef _S_ISLNK
+#    define S_ISLNK(m) _S_ISLNK(m)
+#  else
+#    ifdef _S_IFLNK
+#      define S_ISLNK(m) (((m) & S_IFMT) == _S_IFLNK)
+#    else
+#      ifdef S_IFLNK
+#        define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
+#      endif
+#    endif
+#  endif
+#endif
+
+#ifdef S_IFIFO
+#  ifndef S_ISFIFO
+#    define S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
+#  endif
+#endif
+
+#ifndef S_ISSOCK
+#  ifdef _S_ISSOCK
+#    define S_ISSOCK(m) _S_ISSOCK(m)
+#  else
+#    ifdef _S_IFSOCK
+#      define S_ISSOCK(m) (((m) & S_IFMT) == _S_IFSOCK)
+#    else
+#      ifdef S_IFSOCK
+#	 define S_ISSOCK(m) (((m) & S_IFMT) == S_IFSOCK)
+#      endif
+#    endif
+#  endif
+#endif
+
+#ifndef S_ISBLK
+#  ifdef S_IFBLK
+#    define S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
+#  else
+#    define S_ISBLK(m) (0)  /* anytime false */
+#  endif
+#endif
+
+#ifndef S_ISCHR
+#  define S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
+#endif
+
+#ifndef S_ISREG
+#  define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#endif
+
+#ifndef S_ISDIR
+#  define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#endif
+
 #include "constants.h"
 #include "extconf.h"
 
@@ -580,6 +634,70 @@ stat_executable_real_p(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_symlink_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_ISLNK
+  if (S_ISLNK(get_stat(mrb, self)->st_mode))
+    return mrb_true_value();
+#endif
+  return mrb_false_value();
+}
+
+static mrb_value
+stat_file_p(mrb_state *mrb, mrb_value self)
+{
+  if (S_ISREG(get_stat(mrb, self)->st_mode))
+    return mrb_true_value();
+  return mrb_false_value();
+}
+
+static mrb_value
+stat_directory_p(mrb_state *mrb, mrb_value self)
+{
+  if (S_ISDIR(get_stat(mrb, self)->st_mode))
+    return mrb_true_value();
+  return mrb_false_value();
+}
+
+static mrb_value
+stat_chardev_p(mrb_state *mrb, mrb_value self)
+{
+  if (S_ISCHR(get_stat(mrb, self)->st_mode))
+    return mrb_true_value();
+  return mrb_false_value();
+}
+
+static mrb_value
+stat_blockdev_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_ISBLK
+  if (S_ISBLK(get_stat(mrb, self)->st_mode))
+    return mrb_true_value();
+#endif
+  return mrb_false_value();
+}
+
+static mrb_value
+stat_pipe_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_ISFIFO
+  if (S_ISFIFO(get_stat(mrb, self)->st_mode))
+    return mrb_true_value();
+#endif
+  return mrb_false_value();
+}
+
+static mrb_value
+stat_socket_p(mrb_state *mrb, mrb_value self)
+{
+#ifdef S_ISSOCK
+  if (S_ISSOCK(get_stat(mrb, self)->st_mode))
+    return mrb_true_value();
+#endif
+  return mrb_false_value();
+}
+
+static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
 #if defined(_WIN32) || defined(_WIN64)
@@ -665,6 +783,14 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "world_writable?", stat_world_writable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable?", stat_executable_p, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "executable_real?", stat_executable_real_p, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, stat, "symlink?", stat_symlink_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "file?", stat_file_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "directory?", stat_directory_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "chardev?", stat_chardev_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "blockdev?", stat_blockdev_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "pipe?", stat_pipe_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "socket?", stat_socket_p, MRB_ARGS_NONE());
 
   mrb_define_const(mrb, constants, "IFMT", mrb_fixnum_value(S_IFMT));
   mrb_define_const(mrb, constants, "IFSOCK", mrb_fixnum_value(S_IFSOCK));

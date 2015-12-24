@@ -50,34 +50,6 @@ class File
       size == 0
     end
 
-    def symlink?
-      (mode & IFMT) == IFLNK
-    end
-
-    def file?
-      (mode & IFMT) == IFREG
-    end
-
-    def directory?
-      (mode & IFMT) == IFDIR
-    end
-
-    def chardev?
-      (mode & IFMT) == IFCHR
-    end
-
-    def blockdev?
-      (mode & IFMT) == IFBLK
-    end
-
-    def pipe?
-      (mode & IFMT) == IFIFO
-    end
-
-    def socket?
-      (mode & IFMT) == IFSOCK
-    end
-
     def owned?
       uid == Process.euid
     end

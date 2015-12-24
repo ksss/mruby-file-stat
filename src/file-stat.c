@@ -105,13 +105,14 @@
 #define MRB_MAX_GROUPS (65536)
 
 #if defined(_WIN32) || defined(_WIN64)
+typedef unsigned int uid_t;
 typedef unsigned int gid_t;
-gid_t
+uid_t
 getuid(void)
 {
   return 0;
 }
-gid_t
+uid_t
 geteuid(void)
 {
   return 0;

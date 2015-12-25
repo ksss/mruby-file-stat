@@ -780,6 +780,18 @@ stat_ftype(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+stat_owned_p(mrb_state *mrb, mrb_value self)
+{
+  return get_stat(mrb, self)->st_uid == geteuid() ? mrb_true_value() : mrb_false_value();
+}
+
+static mrb_value
+stat_owned_real_p(mrb_state *mrb, mrb_value self)
+{
+  return get_stat(mrb, self)->st_uid == getuid() ? mrb_true_value() : mrb_false_value();
+}
+
+static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
   return mrb_fixnum_value((mrb_int)getuid());
@@ -862,6 +874,9 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "sticky?", stat_sticky_p, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, stat, "ftype", stat_ftype, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, stat, "owned?", stat_owned_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, stat, "owned_real?", stat_owned_real_p, MRB_ARGS_NONE());
 
   mrb_define_class_method(mrb, process, "uid", process_getuid, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, process, "gid", process_getgid, MRB_ARGS_NONE());

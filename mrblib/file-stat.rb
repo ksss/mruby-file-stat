@@ -48,13 +48,5 @@ class File
     def zero?
       size == 0
     end
-
-    def owned?
-      uid == Process.euid
-    end
-
-    def owned_real?
-      uid == Process.uid
-    end
   end
 end

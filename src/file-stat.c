@@ -794,28 +794,28 @@ stat_owned_real_p(mrb_state *mrb, mrb_value self)
 static mrb_value
 process_getuid(mrb_state *mrb, mrb_value mod)
 {
-  mrb_warn(mrb, "Process.getuid: This method was deprecated.\nPlease use https://github.com/ksss/mruby-process-ext\n");
+  mrb_warn(mrb, "`Process.uid' method was deprecated.\nPlease use https://github.com/ksss/mruby-process-ext\n");
   return mrb_fixnum_value((mrb_int)getuid());
 }
 
 static mrb_value
 process_getgid(mrb_state *mrb, mrb_value mod)
 {
-  mrb_warn(mrb, "Process.getgid: This method was deprecated.\nPlease use https://github.com/ksss/mruby-process-ext\n");
+  mrb_warn(mrb, "`Process.gid' This method was deprecated.\nPlease use https://github.com/ksss/mruby-process-ext\n");
   return mrb_fixnum_value((mrb_int)getgid());
 }
 
 static mrb_value
 process_geteuid(mrb_state *mrb, mrb_value mod)
 {
-  mrb_warn(mrb, "Process.geteuid: This method was deprecated.\nPlease use https://github.com/ksss/mruby-process-ext\n");
+  mrb_warn(mrb, "`Process.euid' This method was deprecated.\nPlease use https://github.com/ksss/mruby-process-ext\n");
   return mrb_fixnum_value((mrb_int)geteuid());
 }
 
 static mrb_value
 process_getegid(mrb_state *mrb, mrb_value mod)
 {
-  mrb_warn(mrb, "Process.getegid: This method was deprecated.\nPlease use https://github.com/ksss/mruby-process-ext\n");
+  mrb_warn(mrb, "`Process.egid' method was deprecated.\nPlease use https://github.com/ksss/mruby-process-ext\n");
   return mrb_fixnum_value((mrb_int)getegid());
 }
 

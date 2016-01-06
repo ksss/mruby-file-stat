@@ -14,7 +14,7 @@ end
 file_stat_dir = File.dirname(__FILE__)
 extconf = "#{file_stat_dir}/src/extconf.h"
 
-file extconf => ["#{file_stat_dir}/src/file-stat.c"] do |t|
+file extconf => [__FILE__, "#{file_stat_dir}/src/file-stat.c"] do |t|
   File.unlink(t.name) if File.exist?(t.name)
 
   # TODO

@@ -52,7 +52,8 @@ stat.setgid?
 stat.sticky?
 stat.ftype #=> socket, link, file, blockSpecial, directory, characterSpecial, fifo or unknown
 
-# support methods
+# Obsolete methods
+# Please use https://github.com/ksss/mruby-process-ext if you want to use these
 Process.uid
 Process.gid
 Process.euid
@@ -69,6 +70,9 @@ Write in /mruby/build_config.rb
 
 ```ruby
 MRuby::Build.new do |conf|
+  # by mgem
+  conf.gem :mgem => 'mruby-file-stat'
+  # by github
   conf.gem :github => 'ksss/mruby-file-stat', :branch => 'master'
 end
 ```

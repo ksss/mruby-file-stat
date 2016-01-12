@@ -10,7 +10,7 @@ if RUBY_VERSION <= "1.9.3"
 end
 # patch end
 
-def build_extconf(fn)
+build_extconf = lambda do |fn|
   return if File.exist?(fn)
 
   # TODO
@@ -35,6 +35,6 @@ MRuby::Gem::Specification.new('mruby-file-stat') do |spec|
   spec.add_dependency('mruby-time')
 
   FileUtils.mkdir_p build_dir
-  build_extconf "#{build_dir}/extconf.h"
+  build_extconf["#{build_dir}/extconf.h"]
   cc.include_paths << build_dir
 end

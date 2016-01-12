@@ -76,6 +76,10 @@ MRuby::Build.new do |conf|
 end
 ```
 
+## Homepage
+
+https://github.com/ksss/mruby-file-stat
+
 ## License
 
 See [https://github.com/ruby/ruby/blob/trunk/file.c](https://github.com/ruby/ruby/blob/trunk/file.c)

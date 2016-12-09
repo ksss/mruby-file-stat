@@ -179,7 +179,7 @@ stat_initialize(mrb_state *mrb, mrb_value self)
     mrb_sys_fail(mrb, RSTRING_PTR(fname));
   }
 
-  ptr = DATA_PTR(self);
+  ptr = (struct stat *)DATA_PTR(self);
   if (ptr) {
     mrb_free(mrb, ptr);
   }
@@ -224,7 +224,7 @@ get_stat(mrb_state *mrb, mrb_value self)
 {
   struct stat *st;
 
-  st = mrb_data_get_ptr(mrb, self, &mrb_stat_type);
+  st = (struct stat *)mrb_data_get_ptr(mrb, self, &mrb_stat_type);
   if (!st) mrb_raise(mrb, E_TYPE_ERROR, "uninitialized File::Stat");
   return st;
 }

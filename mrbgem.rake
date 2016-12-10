@@ -27,6 +27,7 @@ build_extconf = lambda do |fn|
   end
 
   create_header fn
+  rm_f 'mkmf.log'
 end
 
 MRuby::Gem::Specification.new('mruby-file-stat') do |spec|

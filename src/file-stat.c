@@ -94,7 +94,7 @@
 #  define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
 
-#include "extconf.h"
+#include "config.h"
 
 #define STAT(p,s) stat(p,s)
 #ifdef HAVE_LSTAT

@@ -152,13 +152,16 @@ file_s_lstat(mrb_state *mrb, mrb_value klass)
   struct RClass *file_class;
   struct RClass *stat_class;
   struct stat st, *ptr;
-  mrb_value fname;
+  mrb_value fname, tmp;
   char *path;
 
   mrb_get_args(mrb, "o", &fname);
 
-  fname = mrb_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_path");
-  path = mrb_str_to_cstr(mrb, fname);
+  tmp = mrb_check_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_path");
+  if (mrb_nil_p(tmp)) {
+    tmp = mrb_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_str");
+  }
+  path = mrb_str_to_cstr(mrb, tmp);
   if (LSTAT(path, &st) == -1) {
     mrb_sys_fail(mrb, path);
   }
@@ -175,13 +178,16 @@ static mrb_value
 stat_initialize(mrb_state *mrb, mrb_value self)
 {
   struct stat st, *ptr;
-  mrb_value fname;
+  mrb_value fname, tmp;
   char *path;
 
   mrb_get_args(mrb, "o", &fname);
 
-  fname = mrb_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_path");
-  path = mrb_str_to_cstr(mrb, fname);
+  tmp = mrb_check_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_path");
+  if (mrb_nil_p(tmp)) {
+    tmp = mrb_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_str");
+  }
+  path = mrb_str_to_cstr(mrb, tmp);
   if (STAT(path, &st) == -1) {
     mrb_sys_fail(mrb, path);
   }

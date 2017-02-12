@@ -155,8 +155,9 @@ file_s_lstat(mrb_state *mrb, mrb_value klass)
   mrb_value fname;
   char *path;
 
-  mrb_get_args(mrb, "S", &fname);
+  mrb_get_args(mrb, "o", &fname);
 
+  fname = mrb_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_path");
   path = mrb_str_to_cstr(mrb, fname);
   if (LSTAT(path, &st) == -1) {
     mrb_sys_fail(mrb, path);
@@ -177,8 +178,9 @@ stat_initialize(mrb_state *mrb, mrb_value self)
   mrb_value fname;
   char *path;
 
-  mrb_get_args(mrb, "S", &fname);
+  mrb_get_args(mrb, "o", &fname);
 
+  fname = mrb_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_path");
   path = mrb_str_to_cstr(mrb, fname);
   if (STAT(path, &st) == -1) {
     mrb_sys_fail(mrb, path);

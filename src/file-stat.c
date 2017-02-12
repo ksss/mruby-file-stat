@@ -153,10 +153,13 @@ file_s_lstat(mrb_state *mrb, mrb_value klass)
   struct RClass *stat_class;
   struct stat st, *ptr;
   mrb_value fname;
+  char *path;
+
   mrb_get_args(mrb, "S", &fname);
 
-  if (LSTAT(RSTRING_PTR(fname), &st) == -1) {
-    mrb_sys_fail(mrb, RSTRING_PTR(fname));
+  path = mrb_str_to_cstr(mrb, fname);
+  if (LSTAT(path, &st) == -1) {
+    mrb_sys_fail(mrb, path);
   }
 
   file_class = mrb_class_ptr(klass);
@@ -172,11 +175,13 @@ stat_initialize(mrb_state *mrb, mrb_value self)
 {
   struct stat st, *ptr;
   mrb_value fname;
+  char *path;
 
   mrb_get_args(mrb, "S", &fname);
 
-  if (STAT(RSTRING_PTR(fname), &st) == -1) {
-    mrb_sys_fail(mrb, RSTRING_PTR(fname));
+  path = mrb_str_to_cstr(mrb, fname);
+  if (STAT(path, &st) == -1) {
+    mrb_sys_fail(mrb, path);
   }
 
   ptr = (struct stat *)DATA_PTR(self);

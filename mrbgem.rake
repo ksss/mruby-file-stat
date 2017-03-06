@@ -16,7 +16,7 @@ MRuby::Gem::Specification.new('mruby-file-stat') do |spec|
     Dir.chdir build_dir do
       if ENV['OS'] == 'Windows_NT'
         _pp 'on Windows', dir
-        FileUtils.touch "#{dir}/config.h", :verbose => true
+        FileUtils.touch "#{build_dir}/config.h", :verbose => true
       else
         _pp './configure', dir
         system env, "#{dir}/configure"

@@ -8,6 +8,11 @@
 #include "mruby/error.h"
 #include "mruby/class.h"
 
+#include "config.h"
+
+#ifdef HAVE_SYS_SYSMACROS_H
+#include <sys/sysmacros.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
@@ -93,8 +98,6 @@
 #ifndef S_ISDIR
 #  define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
-
-#include "config.h"
 
 #define STAT(p,s) stat(p,s)
 #ifdef HAVE_LSTAT

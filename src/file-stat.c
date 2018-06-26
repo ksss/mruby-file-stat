@@ -10,6 +10,7 @@
 
 #include "config.h"
 
+#include <stdlib.h>
 #ifdef HAVE_SYS_SYSMACROS_H
 #include <sys/sysmacros.h>
 #endif
@@ -165,8 +166,16 @@ file_s_lstat(mrb_state *mrb, mrb_value klass)
     tmp = mrb_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_str");
   }
   path = mrb_str_to_cstr(mrb, tmp);
-  if (LSTAT(path, &st) == -1) {
-    mrb_sys_fail(mrb, path);
+  {
+    char *locale_path;
+    int lstat_result;
+
+    locale_path = mrb_locale_from_utf8(path, -1);
+    lstat_result = LSTAT(locale_path, &st);
+    mrb_locale_free(locale_path);
+    if (lstat_result == -1) {
+      mrb_sys_fail(mrb, path);
+    }
   }
 
   file_class = mrb_class_ptr(klass);
@@ -191,8 +200,16 @@ stat_initialize(mrb_state *mrb, mrb_value self)
     tmp = mrb_convert_type(mrb, fname, MRB_TT_STRING, "String", "to_str");
   }
   path = mrb_str_to_cstr(mrb, tmp);
-  if (STAT(path, &st) == -1) {
-    mrb_sys_fail(mrb, path);
+  {
+    char *locale_path;
+    int stat_result;
+
+    locale_path = mrb_locale_from_utf8(path, -1);
+    stat_result = STAT(locale_path, &st);
+    mrb_locale_free(locale_path);
+    if (stat_result == -1) {
+      mrb_sys_fail(mrb, path);
+    }
   }
 
   ptr = (struct stat *)DATA_PTR(self);

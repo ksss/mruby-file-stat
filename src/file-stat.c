@@ -411,10 +411,10 @@ stat_birthtime(mrb_state *mrb, mrb_value self)
 {
   return time_at_with_sec(mrb, get_stat(mrb, self)->st_birthtimespec.tv_sec);
 }
-# define HAVE_METHOD_BIRTHTIME 1
 #elif defined(_WIN32)
 # define stat_birthtime stat_ctime
-# define HAVE_METHOD_BIRTHTIME 1
+#else
+# define stat_birthtime mrb_notimplement_m
 #endif
 
 static mrb_value
@@ -853,9 +853,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, stat, "atime", stat_atime, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "mtime", stat_mtime, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "ctime", stat_ctime, MRB_ARGS_NONE());
-#ifdef HAVE_METHOD_BIRTHTIME
   mrb_define_method(mrb, stat, "birthtime", stat_birthtime, MRB_ARGS_NONE());
-#endif
   mrb_define_method(mrb, stat, "size", stat_size, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blksize", stat_blksize, MRB_ARGS_NONE());
   mrb_define_method(mrb, stat, "blocks", stat_blocks, MRB_ARGS_NONE());

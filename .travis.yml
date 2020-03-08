@@ -1,11 +1,9 @@
 language: c
-compiler:
-  - gcc
-  - clang
 matrix:
   - compiler: gcc
   - compiler: clang
-  - env: TARGET=windows-x86_64
+  - compiler: gcc
+    env: TARGET=windows-x86_64
 before_install:
   - sudo apt-get -qq update
 install:

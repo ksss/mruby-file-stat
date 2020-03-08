@@ -2,6 +2,10 @@ language: c
 compiler:
   - gcc
   - clang
+matrix:
+  - compiler: gcc
+  - compiler: clang
+  - env: TARGET=windows-x86_64
 before_install:
   - sudo apt-get -qq update
 install:
@@ -12,4 +16,10 @@ before_script:
   - cd mruby
   - cp -fp ../mruby-file-stat/.travis_build_config.rb build_config.rb
 script:
-  - ruby minirake all test
+  - |-
+    if [[ $TARGET == "windows-x86_64" ]]; then
+      docker run -it -v "$(cd ..; pwd):/root" -w "/root/mruby" \
+        --env TARGET hone/mruby-cli rake all
+    else
+      ruby minirake all test
+    fi

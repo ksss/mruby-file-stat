@@ -1,6 +1,7 @@
 ---
 version: "#{build}"
 environment:
+  ruby_version: 26
   MRUBY_CONFIG: "C:/projects/mruby-file-stat/.travis_build_config.rb"
   matrix:
   - Compiler: mingw

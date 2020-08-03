@@ -616,9 +616,9 @@ stat_writable_real_p(mrb_state *mrb, mrb_value self)
 static mrb_value
 stat_world_writable_p(mrb_state *mrb, mrb_value self)
 {
-#ifdef S_IROTH
+#ifdef S_IWOTH
   struct stat *st = get_stat(mrb, self);
-  if ((st->st_mode & (S_IROTH)) == S_IROTH) {
+  if ((st->st_mode & (S_IWOTH)) == S_IWOTH) {
     return mrb_fixnum_value(st->st_mode & (S_IRUGO|S_IWUGO|S_IXUGO));
   }
   else {

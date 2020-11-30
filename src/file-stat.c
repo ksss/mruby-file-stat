@@ -2,18 +2,19 @@
  * original is https://github.com/ruby/ruby/blob/trunk/file.c
  */
 
+#include "config.h"
+
 #include "mruby.h"
 #include "mruby/string.h"
 #include "mruby/data.h"
 #include "mruby/error.h"
 #include "mruby/class.h"
 
-#include "config.h"
-
 #include <stdlib.h>
 #ifdef HAVE_SYS_SYSMACROS_H
 #include <sys/sysmacros.h>
 #endif
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
@@ -382,34 +383,90 @@ stat_rdev_minor(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-time_at_with_sec(mrb_state *mrb, long long sec)
+time_at_with_sec_nsec(mrb_state *mrb, time_t sec, long nsec)
 {
-  return mrb_funcall(mrb, mrb_obj_value(mrb_class_get(mrb, "Time")), "at", 1, mrb_ll2num(mrb, sec));
+  return mrb_funcall(mrb, mrb_obj_value(mrb_class_get(mrb, "Time")), "at", 2, mrb_ll2num(mrb, sec), mrb_ll2num(mrb, nsec / 1000));
+}
+
+static struct timespec
+stat_atimespec(const struct stat *st)
+{
+  struct timespec ts;
+  ts.tv_sec = st->st_atime;
+#if defined(HAVE_STRUCT_STAT_ST_ATIM)
+  ts.tv_nsec = st->st_atim.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_ATIMESPEC)
+  ts.tv_nsec = st->st_atimespec.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_ATIMENSEC)
+  ts.tv_nsec = (long)st->st_atimensec;
+#else
+  ts.tv_nsec = 0;
+#endif
+  return ts;
 }
 
 static mrb_value
 stat_atime(mrb_state *mrb, mrb_value self)
 {
-  return time_at_with_sec(mrb, get_stat(mrb, self)->st_atime);
+  struct timespec ts = stat_atimespec(get_stat(mrb, self));
+  return time_at_with_sec_nsec(mrb, ts.tv_sec, ts.tv_nsec);
+}
+
+static struct timespec
+stat_mtimespec(const struct stat *st)
+{
+  struct timespec ts;
+  ts.tv_sec = st->st_mtime;
+#if defined(HAVE_STRUCT_STAT_ST_MTIM)
+  ts.tv_nsec = st->st_mtim.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_MTIMESPEC)
+  ts.tv_nsec = st->st_mtimespec.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_MTIMENSEC)
+  ts.tv_nsec = (long)st->st_mtimensec;
+#else
+  ts.tv_nsec = 0;
+#endif
+  return ts;
 }
 
 static mrb_value
 stat_mtime(mrb_state *mrb, mrb_value self)
 {
-  return time_at_with_sec(mrb, get_stat(mrb, self)->st_mtime);
+  struct timespec ts = stat_mtimespec(get_stat(mrb, self));
+  return time_at_with_sec_nsec(mrb, ts.tv_sec, ts.tv_nsec);
+}
+
+static struct timespec
+stat_ctimespec(const struct stat *st)
+{
+  struct timespec ts;
+  ts.tv_sec = st->st_ctime;
+#if defined(HAVE_STRUCT_STAT_ST_CTIM)
+  ts.tv_nsec = st->st_ctim.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_CTIMESPEC)
+  ts.tv_nsec = st->st_ctimespec.tv_nsec;
+#elif defined(HAVE_STRUCT_STAT_ST_CTIMENSEC)
+  ts.tv_nsec = (long)st->st_ctimensec;
+#else
+  ts.tv_nsec = 0;
+#endif
+  return ts;
 }
 
 static mrb_value
 stat_ctime(mrb_state *mrb, mrb_value self)
 {
-  return time_at_with_sec(mrb, get_stat(mrb, self)->st_ctime);
+  struct timespec ts = stat_ctimespec(get_stat(mrb, self));
+  return time_at_with_sec_nsec(mrb, ts.tv_sec, ts.tv_nsec);
 }
 
 #if defined(HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC)
 static mrb_value
 stat_birthtime(mrb_state *mrb, mrb_value self)
 {
-  return time_at_with_sec(mrb, get_stat(mrb, self)->st_birthtimespec.tv_sec);
+  struct stat *st = get_stat(mrb, self);
+  const struct timespec *ts = &st->st_birthtimespec;
+  return time_at_with_sec_nsec(mrb, ts->tv_sec, ts->tv_nsec);
 }
 #elif defined(_WIN32)
 # define stat_birthtime stat_ctime

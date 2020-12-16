@@ -1,8 +1,6 @@
 language: c
 matrix:
   - compiler: gcc
-  - compiler: clang
-  - compiler: gcc
     env: TARGET=windows-x86_64
 before_install:
   - sudo apt-get -qq update

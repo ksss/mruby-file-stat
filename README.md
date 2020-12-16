@@ -1,8 +1,6 @@
 # mruby-file-stat
 
-[![CI for mruby-file-stat](https://github.com/ksss/mruby-file-stat/workflows/CI%20for%20mruby-file-stat/badge.svg)](https://github.com/ksss/mruby-file-stat/actions)
-
-[![Build Status](https://travis-ci.org/ksss/mruby-file-stat.svg?branch=master)](https://travis-ci.org/ksss/mruby-file-stat)
+[![CI](https://github.com/ksss/mruby-file-stat/workflows/CI/badge.svg)](https://github.com/ksss/mruby-file-stat/actions)
 
 **File::Stat** class in mruby
 

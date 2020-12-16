@@ -1,6 +1,6 @@
 def gem_config(conf)
-  conf.gembox 'default'
-  conf.gem '../mruby-file-stat'
+  conf.gem :core => "mruby-time"
+  conf.gem '../'
 end
 
 MRuby::Build.new do |conf|

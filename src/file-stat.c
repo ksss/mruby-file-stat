@@ -267,7 +267,12 @@ static mrb_value
 mrb_ll2num(mrb_state *mrb, long long t)
 {
   if (MRB_INT_MIN <= t && t <= MRB_INT_MAX) {
+/* mruby is 2b188ed8a191257f23ddf6f8a27bf1d3964587ed or later. */
+#ifdef SET_FIXNUM_VALUE
+    return mrb_int_value(mrb, (mrb_int)t);
+#else
     return mrb_fixnum_value((mrb_int)t);
+#endif
   } else {
     return mrb_float_value(mrb, (mrb_float)t);
   }

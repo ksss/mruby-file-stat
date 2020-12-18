@@ -465,6 +465,43 @@ stat_ctime(mrb_state *mrb, mrb_value self)
   return time_at_with_sec_nsec(mrb, ts.tv_sec, ts.tv_nsec);
 }
 
+#if defined(HAVE_STATX)
+static mrb_value
+file_s_birthtime(mrb_state *mrb, mrb_value klass)
+{
+  struct statx *stx;
+  char *locale_path;
+  char *path = NULL;
+  int statx_result;
+
+  mrb_get_args(mrb, "z", &path);
+
+  locale_path = mrb_locale_from_utf8(path, -1);
+  statx_result = statx(AT_FDCWD, locale_path, 0, STATX_BTIME, &stx);
+  mrb_locale_free(locale_path);
+  if (statx_result == -1) {
+    mrb_sys_fail(mrb, path);
+  }
+  if (!(stx->stx_mask & STATX_BTIME)) {
+    /* birthtime is not supported on the filesystem */
+    errno = ENOSYS;
+    mrb_sys_fail(mrb, path);
+  }
+  return time_at_with_src_nsec(mrb, stx->stx_btime.tv_sec, stx->stx_btime.tv_nsec);
+}
+#else
+static mrb_value
+file_s_birthtime(mrb_state *mrb, mrb_value klass)
+{
+  mrb_value path;
+  mrb_value stat;
+
+  mrb_get_args(mrb, "S", &path);
+  stat = mrb_funcall(mrb, klass, "stat", 1, path);
+  return mrb_funcall(mrb, stat, "birthtime", 0);
+}
+#endif
+
 #if defined(HAVE_STRUCT_STAT_ST_BIRTHTIMESPEC)
 static mrb_value
 stat_birthtime(mrb_state *mrb, mrb_value self)
@@ -898,6 +935,7 @@ mrb_mruby_file_stat_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, io, "stat", io_stat, MRB_ARGS_NONE());
 
   mrb_define_class_method(mrb, file, "lstat", file_s_lstat, MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, file, "birthtime", file_s_birthtime, MRB_ARGS_REQ(1));
 
   mrb_define_method(mrb, stat, "initialize", stat_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, stat, "initialize_copy", stat_initialize_copy, MRB_ARGS_REQ(1));

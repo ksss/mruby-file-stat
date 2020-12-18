@@ -26,6 +26,7 @@ AC_CHECK_MEMBERS([struct stat.st_birthtimespec])
 
 AC_CHECK_FUNCS(getgroups)
 AC_CHECK_FUNCS(lstat)
+AC_CHECK_FUNCS(statx)
 
 AC_CHECK_HEADERS(sys/sysmacros.h)
 

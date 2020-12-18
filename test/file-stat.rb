@@ -22,6 +22,14 @@ assert 'File.lstat' do
   assert_kind_of File::Stat, File.lstat('README.md')
 end
 
+assert 'File.birthtime' do
+  begin
+    assert_kind_of Time, File.birthtime('README.md')
+  rescue NotImplementedError
+    skip 'This system not supported `birthtime`'
+  end
+end
+
 assert 'File::Stat#initialize_copy' do
   orig = File::Stat.new('README.md')
   copy = orig.dup

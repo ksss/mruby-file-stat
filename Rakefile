@@ -16,3 +16,15 @@ task :test => "#{mruby_dir}/ci_build_config.rb" do
     sh "rake -E 'STDOUT.sync=true' test all MRUBY_CONFIG=ci_build_config.rb"
   end
 end
+
+file 'configure' => 'configure.ac' do
+  sh 'autoconf'
+end
+
+file 'config.h.in' => 'configure.ac' do
+  sh 'autoheader'
+  sh 'rm -f config.h.in~'
+end
+
+desc "update"
+task :update => ['configure', 'config.h.in']

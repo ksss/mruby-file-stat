@@ -27,7 +27,10 @@ MRuby::Gem::Specification.new('mruby-file-stat') do |spec|
       end
     end
   end
+
+  # build hook
   file "#{dir}/src/file-stat.c" => config
+
   task :clean do
     FileUtils.rm_f config, :verbose => true
   end

@@ -1,9 +1,16 @@
 mruby_version = ENV["MRUBY_VERSION"] || 'master'
 mruby_dir = "mruby-#{mruby_version}"
 
-file mruby_dir do
-  sh "git clone --depth=1 --branch #{mruby_version} git://github.com/mruby/mruby.git"
-  sh "mv mruby #{mruby_dir}"
+file 'mruby-head' do
+  sh "git clone --depth 1 --no-single-branch git://github.com/mruby/mruby.git"
+  sh "mv mruby mruby-head"
+end
+
+file mruby_dir => 'mruby-head' do
+  sh "cp -a mruby-head #{mruby_dir}"
+  cd mruby_dir do
+    sh "git checkout #{mruby_version}"
+  end
 end
 
 file "#{mruby_dir}/ci_build_config.rb" => [mruby_dir, ".ci_build_config.rb"] do

@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  ubuntu-2204-gcc:
+  ubuntu-latest-gcc:
     strategy:
       matrix:
         mruby-version:
@@ -20,7 +20,7 @@ jobs:
             disable-presym: 'true'
           - mruby-version: 3.0.0
             disable-presym: 'false'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1.59.1
@@ -34,7 +34,7 @@ jobs:
           DISABLE_PRESYM: ${{ matrix.disable-presym }}
         run: rake test
 
-  ubuntu-2204-clang:
+  ubuntu-latest-clang:
     strategy:
       matrix:
         mruby-version:
@@ -45,7 +45,7 @@ jobs:
             disable-presym: 'true'
           - mruby-version: 3.0.0
             disable-presym: 'false'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1.59.1
@@ -59,7 +59,7 @@ jobs:
           DISABLE_PRESYM: ${{ matrix.disable-presym }}
         run: rake test
 
-  ubuntu-2204-mingw:
+  ubuntu-latest-mingw:
     strategy:
       matrix:
         mruby-version:
@@ -70,7 +70,7 @@ jobs:
             disable-presym: 'true'
           - mruby-version: 3.0.0
             disable-presym: 'false'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1.59.1

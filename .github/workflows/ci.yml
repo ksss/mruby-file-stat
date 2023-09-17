@@ -61,7 +61,6 @@ jobs:
     strategy:
       matrix:
         mruby-version:
-        mruby-version:
           - 3.0.0
           - 3.1.0
           - 3.2.0

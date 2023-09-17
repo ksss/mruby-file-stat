@@ -2,7 +2,7 @@ mruby_version = ENV["MRUBY_VERSION"] || 'master'
 mruby_dir = "mruby-#{mruby_version}"
 
 file 'mruby-head' do
-  sh "git clone --depth 1 --no-single-branch git://github.com/mruby/mruby.git"
+  sh "git clone --depth 1 --no-single-branch https://github.com/mruby/mruby.git"
   sh "mv mruby mruby-head"
 end
 

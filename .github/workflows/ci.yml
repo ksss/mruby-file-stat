@@ -14,7 +14,6 @@ jobs:
       matrix:
         mruby-version:
           - 2.1.2
-          - 2.0.1
         include:
           - mruby-version: 3.0.0
             disable-presym: 'true'
@@ -39,7 +38,6 @@ jobs:
       matrix:
         mruby-version:
           - 2.1.2
-          - 2.0.1
         include:
           - mruby-version: 3.0.0
             disable-presym: 'true'
@@ -64,7 +62,6 @@ jobs:
       matrix:
         mruby-version:
           - 2.1.2
-          - 2.0.1
         include:
           - mruby-version: 3.0.0
             disable-presym: 'true'
@@ -90,7 +87,6 @@ jobs:
       matrix:
         mruby-version:
           - 2.1.2
-          - 2.0.1
         include:
           - mruby-version: 3.0.0
             disable-presym: 'true'

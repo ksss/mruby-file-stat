@@ -301,6 +301,20 @@ assert 'File::Stat#size?' do
   assert_true 0 < stat.size?
 end
 
+assert 'File::Stat#size with large file (2GB)' do
+  large_file = "test_large_file.tmp"
+  target_size = 2**31 # 2GB
+  begin
+    File.open(large_file, 'wb') do |f|
+      (2**19).times { f << "\0" * 4096 }
+    end
+    stat = File::Stat.new(large_file)
+    assert_equal target_size, stat.size
+  ensure
+    File.delete(large_file) if File.exist?(large_file)
+  end
+end
+
 assert 'File::Stat#owned?' do
   stat = File::Stat.new('README.md')
   assert_true stat.owned?

@@ -306,7 +306,8 @@ assert 'File::Stat#size with large file (2GB)' do
   target_size = 2**31 # 2GB
   begin
     File.open(large_file, 'wb') do |f|
-      (2**19).times { f << "\0" * 4096 }
+      f.seek(target_size - 1)
+      f.write("\0")
     end
     stat = File::Stat.new(large_file)
     assert_equal target_size, stat.size

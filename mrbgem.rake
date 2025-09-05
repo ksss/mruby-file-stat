@@ -2,6 +2,7 @@ MRuby::Gem::Specification.new('mruby-file-stat') do |spec|
   spec.license = 'MIT'
   spec.author  = 'ksss <co000ri@gmail.com>'
   spec.add_dependency('mruby-time')
+  spec.add_test_dependency('mruby-io')
 
   env = {
     'CC' => "#{build.cc.command} #{build.cc.flags.join(' ')}",
